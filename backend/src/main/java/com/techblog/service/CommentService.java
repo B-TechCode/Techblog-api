@@ -34,7 +34,18 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    // 🔥 COMMON MAPPER (BEST PRACTICE)
+    // 🔥🔥🔥 UPDATED: GET COMMENT BY ID
+    public Comment getCommentById(Integer id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+    }
+
+    // 🔥🔥🔥 UPDATED: DELETE COMMENT
+    public void deleteComment(Integer id) {
+        commentRepository.deleteById(id);
+    }
+
+    // 🔥 COMMON MAPPER
     private CommentResponse mapToDTO(Comment comment) {
         return CommentResponse.builder()
                 .id(comment.getId())

@@ -1,40 +1,43 @@
 package com.techblog.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "posts")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder   // 🔥 useful for clean object creation
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // ✅ Validation added
-    @NotBlank(message = "Title is required")
     private String title;
 
-    // ✅ Validation added
-    @NotBlank(message = "Content is required")
-    @Column(length = 5000)
+    @Column(columnDefinition = "TEXT")
     private String content;
 
-    // 🔗 Many posts → one user
-    @ManyToOne(fetch = FetchType.LAZY)
+    // 🔥 ADD THIS FIELD
+    @Column(name = "image")
+    private String image;
+
+    // 🔥 IMPORTANT FIX (PREVENT LOOP)
+    @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"password", "otp", "otpExpiry"})
     private User user;
 
-    // 🔗 One post → many comments
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore   // 🔥 prevents infinite recursion
-    private List<Comment> comments;
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

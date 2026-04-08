@@ -3,6 +3,7 @@ package com.techblog.config;
 import com.techblog.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,12 +29,19 @@ public class SecurityConfig {
 
                 // 🔐 Authorization rules
                 .authorizeHttpRequests(auth -> auth
+
+                        // ✅ VERY IMPORTANT: Allow preflight requests (FIX)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ✅ Public APIs
                         .requestMatchers(
                                 "/api/users/login",
                                 "/api/users/register",
-                                "/api/users/verify",   // ✅ FIXED (moved here)
-                                "/uploads/**"          // ✅ for images
+                                "/api/users/verify",
+                                "/uploads/**"
                         ).permitAll()
+
+                        // 🔐 All others secured
                         .anyRequest().authenticated()
                 )
 
