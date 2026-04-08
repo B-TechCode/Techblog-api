@@ -51,7 +51,8 @@ const Login = ({ goToHome, goToRegister }) => {
             // alert("Login Successful!");
 
             // ✅ SHOW SUCCESS MESSAGE
-            setSuccess("Login successful! Redirecting...");
+            setSuccess("Login successful!");
+            localStorage.setItem("userEmail", res.data.email);
 
             // 🔥 DELAY FOR UX
             setTimeout(() => {

@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import API from "../api/axios";
 import Upload from "./Upload";
 import CreatePost from "./CreatePost";
-import Posts from "./Posts";
 
-const Dashboard = ({ goToLogin, goToProfile }) => {
+const Dashboard = ({ goToLogin, goToProfile, goToFeed }) => {   // ✅ added goToFeed
 
     const [userEmail, setUserEmail] = useState("");
     const [profilePic, setProfilePic] = useState("");
-    const [reload, setReload] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -54,20 +52,32 @@ const Dashboard = ({ goToLogin, goToProfile }) => {
             }}>
                 <h2>TechBlog</h2>
 
-                <button
-                    onClick={handleLogout}
-                    style={{
-                        padding: "8px 14px",
-                        background: "#ef4444",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        fontWeight: "bold"
-                    }}
-                >
-                    Logout
-                </button>
+                <div style={{ display: "flex", gap: "10px" }}>
+
+                    {/* ✅ PROFILE BUTTON */}
+                    <button
+                        onClick={goToProfile}
+                        style={navBtn}
+                    >
+                        👤
+                    </button>
+
+                    {/* LOGOUT */}
+                    <button
+                        onClick={handleLogout}
+                        style={{
+                            padding: "8px 14px",
+                            background: "#ef4444",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            fontWeight: "bold"
+                        }}
+                    >
+                        Logout
+                    </button>
+                </div>
             </div>
 
             {/* 🔥 MAIN */}
@@ -75,7 +85,7 @@ const Dashboard = ({ goToLogin, goToProfile }) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                paddingTop: "20px"   // 🔥 moved up
+                paddingTop: "20px"
             }}>
 
                 {/* 🔥 WELCOME CARD */}
@@ -105,7 +115,12 @@ const Dashboard = ({ goToLogin, goToProfile }) => {
                         Welcome User
                     </h3>
 
-                    <div style={{ fontSize: "35px", marginBottom: "8px" }}>
+
+                    <div style={{
+                        fontSize: "35px",
+                        marginBottom: "8px",
+                        color: "#38bdf8", // Profile card symbol
+                    }}>
                         👤
                     </div>
 
@@ -113,15 +128,23 @@ const Dashboard = ({ goToLogin, goToProfile }) => {
 
                 </div>
 
-                {/* 🔥 CREATE POST */}
-                <CreatePost refreshPosts={() => setReload(!reload)} />
+                {/* 🔥 CREATE POST (UPDATED) */}
+                <CreatePost goToFeed={goToFeed} />
 
-                {/* POSTS */}
-                <Posts reload={reload} />
+                {/* ❌ REMOVED POSTS FROM HERE */}
 
             </div>
         </div>
     );
+};
+
+const navBtn = {
+    padding: "8px 12px",
+    background: "#1e293b",
+    color: "white",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer"
 };
 
 export default Dashboard;

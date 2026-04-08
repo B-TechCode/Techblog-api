@@ -1,7 +1,7 @@
 import { useState } from "react";
 import API from "../api/axios";
 
-const CreatePost = ({ refreshPosts }) => {
+const CreatePost = ({ refreshPosts, goToFeed }) => {
 
     const [form, setForm] = useState({
         title: "",
@@ -28,22 +28,34 @@ const CreatePost = ({ refreshPosts }) => {
 
             const token = localStorage.getItem("token");
 
-            await API.post("/posts", form, {
+            const formData = new FormData();
+            formData.append("title", form.title);
+            formData.append("content", form.content);
+
+            // 🔥 USE PROFILE IMAGE NAME
+            const profileImage = localStorage.getItem("profileImage");
+            if (profileImage) {
+                formData.append("imageName", profileImage);
+            }
+
+            await API.post("/posts", formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
+                    Authorization: `Bearer ${token}`
+                }
             });
 
-            setSuccess("Post created successfully!");
             setForm({ title: "", content: "" });
+            setSuccess("Post created successfully!");
 
+            // 🔥 refresh + redirect
             if (refreshPosts) refreshPosts();
 
-            setTimeout(() => setSuccess(""), 2000);
+            setTimeout(() => {
+                if (goToFeed) goToFeed();
+            }, 800);
 
         } catch (err) {
-            console.error(err);
+            console.error("CREATE POST ERROR:", err.response?.data || err.message);
             alert("Failed to create post");
         } finally {
             setLoading(false);
@@ -52,22 +64,14 @@ const CreatePost = ({ refreshPosts }) => {
 
     return (
         <div
-            style={{
-                width: "450px",
-                marginTop: "15px",  ///Reduce margin top
-                padding: "20px",
-                borderRadius: "16px",
-                background: "rgba(255,255,255,0.2)",
-                backdropFilter: "blur(10px)",
-                color: "white",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-                transition: "0.3s"
-            }}
+            style={cardStyle}
             onMouseEnter={(e)=>{
                 e.currentTarget.style.transform="scale(1.03)";
+                e.currentTarget.style.boxShadow="0 20px 40px rgba(0,0,0,0.6)";
             }}
             onMouseLeave={(e)=>{
                 e.currentTarget.style.transform="scale(1)";
+                e.currentTarget.style.boxShadow="0 10px 30px rgba(0,0,0,0.3)";
             }}
         >
             <h2 style={{ textAlign: "center", marginBottom: "15px" }}>
@@ -75,12 +79,7 @@ const CreatePost = ({ refreshPosts }) => {
             </h2>
 
             {success && (
-                <p style={{
-                    background: "#22c55e",
-                    padding: "8px",
-                    borderRadius: "6px",
-                    textAlign: "center"
-                }}>
+                <p style={successStyle}>
                     {success}
                 </p>
             )}
@@ -113,14 +112,29 @@ const CreatePost = ({ refreshPosts }) => {
     );
 };
 
+// 🎨 STYLES
+
+const cardStyle = {
+    width: "450px",
+    marginTop: "15px",
+    padding: "20px",
+    borderRadius: "16px",
+    background: "rgba(255,255,255,0.15)",
+    backdropFilter: "blur(12px)",
+    color: "white",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+    transition: "all 0.3s ease"
+};
+
 const inputStyle = {
     width: "100%",
     padding: "10px",
     margin: "10px 0",
     borderRadius: "8px",
     border: "1px solid rgba(255,255,255,0.3)",
-    background: "rgba(0,0,0,0.3)",   // 🔥 darker glass
-    color: "#ffffff"                // 🔥 keep white
+    background: "rgba(0,0,0,0.5)",
+    color: "#ffffff",
+    outline: "none"
 };
 
 const textareaStyle = {
@@ -136,12 +150,20 @@ const buttonStyle = {
     border: "none",
     borderRadius: "8px",
     color: "white",
-    cursor: "pointer"
+    cursor: "pointer",
+    fontWeight: "bold"
 };
 
 const errorStyle = {
     color: "#ff6b6b",
     fontSize: "12px"
+};
+
+const successStyle = {
+    background: "#22c55e",
+    padding: "8px",
+    borderRadius: "6px",
+    textAlign: "center"
 };
 
 export default CreatePost;

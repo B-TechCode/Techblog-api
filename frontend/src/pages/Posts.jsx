@@ -1,83 +1,87 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
-import Spinner from "./Spinner";
 
-const Posts = ({ reload }) => {
+const Posts = ({ goToDashboard }) => {
 
     const [posts, setPosts] = useState([]);
-    const [likes, setLikes] = useState({});
     const [comments, setComments] = useState({});
     const [commentInput, setCommentInput] = useState({});
-    const [loading, setLoading] = useState(false);
-
-    // 🔥 EDIT STATES
-    const [editingPost, setEditingPost] = useState(null);
-    const [editData, setEditData] = useState({ title: "", content: "" });
 
     const userEmail = localStorage.getItem("userEmail");
 
     useEffect(() => {
         fetchPosts();
-    }, [reload]);
+    }, []);
 
     const fetchPosts = async () => {
         try {
-            setLoading(true);
+            const token = localStorage.getItem("token");
 
-            const res = await API.get("/posts");
-            setPosts(res.data);
-
-            res.data.forEach(post => {
-                fetchLikes(post.id);
-                fetchComments(post.id);
+            const res = await API.get("/posts", {
+                headers: { Authorization: `Bearer ${token}` }
             });
 
+            const data = res.data.reverse();
+            setPosts(data);
+
+            for (let post of data) {
+                fetchComments(post.id);
+            }
+
         } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
+            console.error("FETCH POSTS ERROR:", err);
         }
     };
 
-    const fetchLikes = async (postId) => {
-        const res = await API.get(`/likes/${postId}`);
-        setLikes(prev => ({ ...prev, [postId]: res.data }));
-    };
-
-    const handleLike = async (postId) => {
-        const token = localStorage.getItem("token");
-
-        await API.post(`/likes/${postId}`, {}, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-
-        fetchLikes(postId);
-    };
-
     const fetchComments = async (postId) => {
-        const res = await API.get(`/comments/${postId}`);
-        setComments(prev => ({
-            ...prev,
-            [postId]: res.data
-        }));
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await API.get(`/comments/${postId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setComments(prev => ({
+                ...prev,
+                [postId]: res.data
+            }));
+
+        } catch (err) {
+            console.error("FETCH COMMENTS ERROR:", err);
+        }
     };
 
     const handleAddComment = async (postId) => {
         const token = localStorage.getItem("token");
+        const content = (commentInput[postId] || "").trim();
 
-        if (!commentInput[postId]) return;
+        if (!content) {
+            alert("Comment cannot be empty");
+            return;
+        }
 
-        await API.post(`/comments/${postId}`, {
-            content: commentInput[postId]
-        }, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        try {
+            await API.post(`/comments/${postId}`,
+                { content },
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
 
-        setCommentInput(prev => ({ ...prev, [postId]: "" }));
-        fetchComments(postId);
+            // 🔥 FIX: refresh only this post comments (fast)
+            await fetchComments(postId);
+
+            setCommentInput(prev => ({
+                ...prev,
+                [postId]: ""
+            }));
+
+        } catch (err) {
+            console.error("COMMENT ERROR:", err.response?.data || err.message);
+            alert("Comment failed");
+        }
     };
 
-    // 🔥 DELETE COMMENT (ADDED)
     const handleDeleteComment = async (commentId, postId) => {
         try {
             const token = localStorage.getItem("token");
@@ -86,261 +90,99 @@ const Posts = ({ reload }) => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            fetchComments(postId);
+            setComments(prev => ({
+                ...prev,
+                [postId]: prev[postId].filter(c => c.id !== commentId)
+            }));
 
         } catch (err) {
-            console.error(err);
-        }
-    };
-
-    // 🔥 DELETE POST
-    const handleDeletePost = async (postId) => {
-        try {
-            const token = localStorage.getItem("token");
-
-            await API.delete(`/posts/${postId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            fetchPosts();
-
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    // 🔥 EDIT
-    const handleEditClick = (post) => {
-        setEditingPost(post.id);
-        setEditData({
-            title: post.title,
-            content: post.content
-        });
-    };
-
-    const handleUpdatePost = async () => {
-        try {
-            const token = localStorage.getItem("token");
-
-            await API.put(`/posts/${editingPost}`, editData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            setEditingPost(null);
-            fetchPosts();
-
-        } catch (err) {
-            console.error(err);
+            console.error("DELETE COMMENT ERROR:", err);
         }
     };
 
     return (
-        <div style={{
-            width: "100%",
-            maxWidth: "600px",
-            margin: "auto"
-        }}>
+        <div style={mainStyle}>
 
-            {loading && <Spinner />}
+            {/* NAVBAR */}
+            <div style={navStyle}>
+                <h2>Feed</h2>
+                <button onClick={goToDashboard} style={backBtn}>Back</button>
+            </div>
 
-            {!loading && posts.map(post => {
-                const isOwner = post.user?.email === userEmail;
+            {/* POSTS GRID */}
+            <div style={gridStyle}>
+                {posts.map(post => (
 
-                return (
-                    <div key={post.id} style={{
-                        background: "#1e293b",
-                        color: "white",
-                        borderRadius: "12px",
-                        marginBottom: "20px",
-                        padding: "15px"
-                    }}>
+                    <div
+                        key={post.id}
+                        style={cardStyle}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = "scale(1.05)";
+                            e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.8)";
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = "scale(1)";
+                            e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
+                        }}
+                    >
 
-                        {/* EDIT MODE */}
-                        {editingPost === post.id ? (
-                            <>
-                                <input
-                                    style={inputStyle}
-                                    value={editData.title}
-                                    onChange={(e)=>setEditData({
-                                        ...editData,
-                                        title: e.target.value
-                                    })}
-                                />
+                        <h3>{post.title}</h3>
+                        <p>{post.content}</p>
 
-                                <textarea
-                                    style={{ ...inputStyle, marginTop: "10px" }}
-                                    value={editData.content}
-                                    onChange={(e)=>setEditData({
-                                        ...editData,
-                                        content: e.target.value
-                                    })}
-                                />
-
-                                <div style={{ marginTop: "10px" }}>
-                                    <button style={commentBtn} onClick={handleUpdatePost}>
-                                        Update
-                                    </button>
-
-                                    <button
-                                        style={{ ...deleteBtn, marginLeft: "10px" }}
-                                        onClick={() => setEditingPost(null)}
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <h3>{post.title}</h3>
-                                <p>{post.content}</p>
-                            </>
+                        {/* IMAGE */}
+                        {post.image && (
+                            <img
+                                src={`http://localhost:8080/uploads/${post.image}`}
+                                alt="post"
+                                style={imgStyle}
+                            />
                         )}
 
-                        <small style={{ opacity: 0.7 }}>
-                            👤 {post.user?.email}
-                        </small>
+                        {/* COMMENTS */}
+                        <div>
+                            {comments[post.id]?.map((c) => (
+                                <div key={c.id} style={commentBox}>
+                                    💬 {c.content}
 
-                        <div style={{ marginTop: "10px", display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                            <button
-                                style={likeBtn}
-                                onClick={(e)=>{
-                                    e.target.style.transform="scale(1.2)";
-                                    setTimeout(()=>e.target.style.transform="scale(1)",150);
-                                    handleLike(post.id);
-                                }}
-                            >
-                                ❤️ {likes[post.id] || 0}
-                            </button>
-
-                            {isOwner && (
-                                <>
-                                    <button
-                                        style={editBtn}
-                                        onClick={() => handleEditClick(post)}
-                                    >
-                                        Edit
-                                    </button>
-
-                                    <button
-                                        style={deleteBtn}
-                                        onClick={() => handleDeletePost(post.id)}
-                                    >
-                                        Delete
-                                    </button>
-                                </>
-                            )}
+                                    {(c.userEmail === userEmail || userEmail === "admin@gmail.com") && (
+                                        <button
+                                            style={deleteBtn}
+                                            onClick={() => handleDeleteComment(c.id, post.id)}
+                                        >
+                                            ✖
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
                         </div>
 
-                        {/* COMMENTS */}
-                        <div style={{
-                            marginTop: "15px",
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: "10px"
-                        }}>
+                        {/* INPUT */}
+                        <div style={{ display: "flex", marginTop: "10px" }}>
                             <input
-                                placeholder="Add a comment..."
-                                style={inputStyle}
                                 value={commentInput[post.id] || ""}
-                                onChange={(e)=>setCommentInput({
-                                    ...commentInput,
-                                    [post.id]: e.target.value
-                                })}
+                                onChange={(e) =>
+                                    setCommentInput({
+                                        ...commentInput,
+                                        [post.id]: e.target.value
+                                    })
+                                }
+                                placeholder="Add comment..."
+                                style={inputStyle}
                             />
 
                             <button
-                                style={commentBtn}
-                                onClick={()=>handleAddComment(post.id)}
+                                onClick={() => handleAddComment(post.id)}
+                                style={postBtn}
                             >
                                 Post
                             </button>
                         </div>
 
-                        {/* 🔥 UPDATED COMMENT SECTION */}
-                        <div style={{ marginTop: "10px" }}>
-                            {(comments[post.id] || []).map((c, i) => {
-                                const isCommentOwner = c.user?.email === userEmail;
-
-                                return (
-                                    <div key={i} style={commentBox}>
-                                        <b>{c.user?.email}</b>: {c.content}
-
-                                        {isCommentOwner && (
-                                            <button
-                                                style={{
-                                                    marginLeft: "10px",
-                                                    background: "transparent",
-                                                    color: "#ef4444",
-                                                    border: "none",
-                                                    cursor: "pointer"
-                                                }}
-                                                onClick={() => handleDeleteComment(c.id, post.id)}
-                                            >
-                                                ❌
-                                            </button>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
                     </div>
-                );
-            })}
+                ))}
+            </div>
         </div>
     );
-};
-
-// 🎨 STYLES (UNCHANGED)
-const likeBtn = {
-    padding: "6px 12px",
-    borderRadius: "20px",
-    border: "none",
-    background: "#ef4444",
-    color: "white",
-    cursor: "pointer",
-    transition: "0.2s"
-};
-
-const editBtn = {
-    padding: "6px 10px",
-    background: "#f59e0b",
-    border: "none",
-    borderRadius: "6px",
-    color: "white"
-};
-
-const deleteBtn = {
-    padding: "6px 10px",
-    background: "#dc2626",
-    border: "none",
-    borderRadius: "6px",
-    color: "white"
-};
-
-const inputStyle = {
-    flex: 1,
-    minWidth: "200px",
-    padding: "8px",
-    borderRadius: "6px",
-    border: "none",
-    background: "#334155",
-    color: "white"
-};
-
-const commentBtn = {
-    padding: "8px 12px",
-    background: "#38bdf8",
-    border: "none",
-    borderRadius: "6px",
-    color: "white"
-};
-
-const commentBox = {
-    background: "#0f172a",
-    padding: "6px",
-    borderRadius: "6px",
-    marginTop: "5px"
 };
 
 export default Posts;

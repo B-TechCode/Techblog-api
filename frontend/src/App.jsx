@@ -5,6 +5,7 @@ import VerifyOTP from "./pages/VerifyOTP";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import Posts from "./pages/Posts";   // ✅ Feed Page
 
 function App() {
 
@@ -19,7 +20,9 @@ function App() {
         }
     }, []);
 
-    // ✅ ROUTING SYSTEM (VERY CLEAN)
+    // ================= ROUTING =================
+
+    // REGISTER
     if (page === "register") {
         return (
             <Register
@@ -29,12 +32,14 @@ function App() {
         );
     }
 
+    // VERIFY
     if (page === "verify") {
         return (
             <VerifyOTP goToLogin={() => setPage("login")} />
         );
     }
 
+    // LOGIN
     if (page === "login") {
         return (
             <Login
@@ -44,18 +49,34 @@ function App() {
         );
     }
 
+    // DASHBOARD (CREATE POST PAGE)
     if (page === "dashboard") {
         return (
             <Dashboard
                 goToLogin={() => setPage("login")}
-                goToProfile={() => setPage("profile")}   // 🔥 FIXED
+                goToProfile={() => setPage("profile")}
+                goToFeed={() => setPage("feed")}   // ✅ redirect after post
             />
         );
     }
 
+    // ✅ FEED PAGE (ALL POSTS PAGE)
+    if (page === "feed") {
+        return (
+            <Posts
+                goToDashboard={() => setPage("dashboard")}   // 🔙 back
+                goToProfile={() => setPage("profile")}       // optional
+            />
+        );
+    }
+
+    // PROFILE
     if (page === "profile") {
         return (
-            <Profile goToDashboard={() => setPage("dashboard")} />
+            <Profile
+                goToDashboard={() => setPage("dashboard")}
+                goToFeed={() => setPage("feed")}   // optional navigation
+            />
         );
     }
 
