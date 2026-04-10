@@ -1,44 +1,47 @@
 import { useState, useEffect } from "react";
 import API from "../api/axios";
 
-const Upload = () => {
+const Upload = ({ onUploadSuccess }) => {
 
     const [file, setFile] = useState(null);
-    const [imageUrl, setImageUrl] = useState("");
     const [preview, setPreview] = useState("");
+    const [imageName, setImageName] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
 
+    // ✅ Load saved image on refresh
     useEffect(() => {
-        const savedImage = localStorage.getItem("profilePic");
-        if (savedImage) {
-            setImageUrl(savedImage);
+        const saved = localStorage.getItem("profileImage");
+        if (saved) {
+            setImageName(saved);
         }
     }, []);
 
     const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0];
-        setFile(selectedFile);
+        const selected = e.target.files[0];
+        if (!selected) return;
 
-        if (selectedFile) {
-            setPreview(URL.createObjectURL(selectedFile));
+        if (!selected.type.startsWith("image/")) {
+            alert("Only image files allowed");
+            return;
         }
 
-        setMessage("");
-        setError("");
+        setFile(selected);
+
+        // ✅ Preview
+        const previewURL = URL.createObjectURL(selected);
+        setPreview(previewURL);
     };
 
     const handleUpload = async () => {
+
         if (!file) {
-            setError("Please select a file");
+            alert("Select image");
             return;
         }
 
         try {
             setLoading(true);
-            setError("");
-            setMessage("");
 
             const token = localStorage.getItem("token");
 
@@ -48,172 +51,140 @@ const Upload = () => {
             const res = await API.post("/users/upload", formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
-                },
+                }
             });
 
-            setMessage("Profile updated successfully!");
+            // ✅ SAFE RESPONSE
+            const imgName =
+                res?.data?.image ||
+                res?.data?.fileName ||
+                res?.data?.name ||
+                res?.data;
 
-            setImageUrl(res.data.url);
-            localStorage.setItem("profilePic", res.data.url);
+            if (!imgName || imgName === "undefined") {
+                throw new Error("Invalid image response");
+            }
 
-            setPreview("");
+            console.log("Uploaded Image:", imgName);
+
+            // ✅ Save globally
+            localStorage.setItem("profileImage", imgName);
+            setImageName(imgName);
+
+            // ✅ Update parent instantly (Dashboard)
+            if (onUploadSuccess) {
+                onUploadSuccess(imgName);
+            }
+
+            setMessage("Uploaded ✅");
             setFile(null);
+            setPreview("");
 
             setTimeout(() => setMessage(""), 2000);
 
         } catch (err) {
-            console.error(err);
-            setError("Upload failed!");
+            console.error("UPLOAD ERROR:", err.response?.data || err.message);
+            alert("Upload failed!");
         } finally {
             setLoading(false);
         }
     };
 
-    // 🎨 STYLES (UNCHANGED)
-    const cardStyle = {
-        width: "100%",
-        padding: "5px",
-        borderRadius: "12px",
-        background: "rgba(255,255,255,0.10)",
-        backdropFilter: "blur(6px)",
-        color: "white",
-        border: "1px solid rgba(255,255,255,0.2)",
-        textAlign: "center",
-        marginTop: "10px",
-        transition: "0.3s",
-        cursor: "pointer"
-    };
-
-    const titleStyle = {
-        fontSize: "15px",
-        marginBottom: "8px",
-        fontWeight: "600"
-    };
-
-    const imageStyle = {
-        width: "60px",
-        height: "60px",
-        borderRadius: "50%",
-        objectFit: "cover",
-        margin: "8px 0",
-        border: "2px solid white",
-        transition: "0.3s"
-    };
-
-    const previewStyle = {
-        ...imageStyle,
-        border: "2px solid #00c6ff"
-    };
-
-    const fileBtn = {
-        display: "inline-block",
-        padding: "6px 12px",
-        background: "#1e90ff",
-        color: "white",
-        borderRadius: "6px",
-        cursor: "pointer",
-        fontSize: "13px",
-        marginTop: "6px"
-    };
-
-    const uploadBtn = {
-        padding: "7px 14px",
-        background: "linear-gradient(45deg, #00c6ff, #0072ff)",
-        border: "none",
-        borderRadius: "6px",
-        color: "white",
-        cursor: "pointer",
-        fontSize: "13px",
-        marginTop: "8px"
-    };
-
-    const hiddenInput = {
-        display: "none"
-    };
+    // ✅ FINAL IMAGE TO SHOW
+    const finalImage = preview
+        ? preview
+        : imageName
+            ? `http://localhost:8080/uploads/${imageName}`
+            : "";
 
     return (
-        <div
-            style={cardStyle}
-            onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.03)";
-                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.5)";
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow = "none";
-            }}
-        >
+        <div style={box}>
 
-            <h4 style={titleStyle}>
-                Upload Profile Picture
-            </h4>
+            <h4 style={title}>Upload Profile</h4>
 
-            {message && (
-                <p style={{
-                    background: "#28a745",
-                    padding: "6px",
-                    borderRadius: "5px",
-                    fontSize: "12px"
-                }}>
-                    {message}
-                </p>
-            )}
 
-            {error && (
-                <p style={{
-                    background: "#ff4d4f",
-                    padding: "6px",
-                    borderRadius: "5px",
-                    fontSize: "12px"
-                }}>
-                    {error}
-                </p>
-            )}
+            <div style={row}>
 
-            {imageUrl && !preview && (
-                <img
-                    src={imageUrl}
-                    alt="Profile"
-                    style={imageStyle}
-                    onMouseEnter={(e)=> e.target.style.transform="scale(1.1)"}
-                    onMouseLeave={(e)=> e.target.style.transform="scale(1)"}
-                />
-            )}
+                <label style={chooseBtn}>
+                    Choose
+                    <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                    />
+                </label>
 
-            {preview && (
-                <img
-                    src={preview}
-                    alt="Preview"
-                    style={previewStyle}
-                    onMouseEnter={(e)=> e.target.style.transform="scale(1.1)"}
-                    onMouseLeave={(e)=> e.target.style.transform="scale(1)"}
-                />
-            )}
+                <button
+                    onClick={handleUpload}
+                    style={uploadBtn}
+                    disabled={loading}
+                >
+                    {loading ? "..." : "Upload"}
+                </button>
 
-            <label style={fileBtn}>
-                Choose Image
-                <input
-                    type="file"
-                    style={hiddenInput}
-                    onChange={handleFileChange}
-                />
-            </label>
+            </div>
 
-            <br />
-
-            <button
-                style={uploadBtn}
-                onClick={handleUpload}
-                disabled={loading}
-                onMouseEnter={(e)=>e.target.style.opacity="0.8"}
-                onMouseLeave={(e)=>e.target.style.opacity="1"}
-            >
-                {loading ? "Uploading..." : "Upload"}
-            </button>
+            {message && <p style={msg}>{message}</p>}
 
         </div>
     );
 };
 
 export default Upload;
+
+
+/* 🎨 STYLES */
+
+const box = {
+    marginTop: "10px",
+    padding: "10px",
+    borderRadius: "10px",
+    background: "rgba(255,255,255,0.1)",
+    textAlign: "center"
+};
+
+const title = {
+    fontSize: "14px",
+    marginBottom: "8px"
+};
+
+const row = {
+    display: "flex",
+    gap: "10px",
+    justifyContent: "center"
+};
+
+const imageStyle = {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    marginBottom: "10px",
+    border: "2px solid #38bdf8"
+};
+
+const chooseBtn = {
+    background: "#3b82f6",
+    padding: "5px 10px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    color: "white",
+    fontSize: "13px"
+};
+
+const uploadBtn = {
+    background: "#06b6d4",
+    padding: "5px 10px",
+    border: "none",
+    borderRadius: "6px",
+    color: "white",
+    cursor: "pointer",
+    fontSize: "13px"
+};
+
+const msg = {
+    marginTop: "6px",
+    fontSize: "12px",
+    color: "#22c55e"
+};

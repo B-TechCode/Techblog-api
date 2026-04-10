@@ -15,31 +15,20 @@ const Posts = ({ goToDashboard }) => {
 
     const fetchPosts = async () => {
         try {
-            const token = localStorage.getItem("token");
-
-            const res = await API.get("/posts", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
+            const res = await API.get("/posts");
             const data = res.data.reverse();
             setPosts(data);
 
-            for (let post of data) {
-                fetchComments(post.id);
-            }
+            data.forEach(p => fetchComments(p.id));
 
         } catch (err) {
-            console.error("FETCH POSTS ERROR:", err);
+            console.error(err);
         }
     };
 
     const fetchComments = async (postId) => {
         try {
-            const token = localStorage.getItem("token");
-
-            const res = await API.get(`/comments/${postId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await API.get(`/comments/${postId}`);
 
             setComments(prev => ({
                 ...prev,
@@ -47,29 +36,24 @@ const Posts = ({ goToDashboard }) => {
             }));
 
         } catch (err) {
-            console.error("FETCH COMMENTS ERROR:", err);
+            console.error(err);
         }
     };
 
     const handleAddComment = async (postId) => {
-        const token = localStorage.getItem("token");
         const content = (commentInput[postId] || "").trim();
-
-        if (!content) {
-            alert("Comment cannot be empty");
-            return;
-        }
+        if (!content) return;
 
         try {
-            await API.post(`/comments/${postId}`,
-                { content },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
+            const token = localStorage.getItem("token");
 
-            // 🔥 FIX: refresh only this post comments (fast)
-            await fetchComments(postId);
+            await API.post(`/comments/${postId}`, { content }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            fetchComments(postId);
 
             setCommentInput(prev => ({
                 ...prev,
@@ -77,87 +61,102 @@ const Posts = ({ goToDashboard }) => {
             }));
 
         } catch (err) {
-            console.error("COMMENT ERROR:", err.response?.data || err.message);
             alert("Comment failed");
         }
     };
 
-    const handleDeleteComment = async (commentId, postId) => {
+    const handleDelete = async (id) => {
         try {
             const token = localStorage.getItem("token");
 
-            await API.delete(`/comments/${commentId}`, {
+            await API.delete(`/posts/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            setComments(prev => ({
-                ...prev,
-                [postId]: prev[postId].filter(c => c.id !== commentId)
-            }));
+            setPosts(prev => prev.filter(p => p.id !== id));
 
         } catch (err) {
-            console.error("DELETE COMMENT ERROR:", err);
+            console.error(err);
         }
     };
 
     return (
-        <div style={mainStyle}>
+        <div style={main}>
 
             {/* NAVBAR */}
-            <div style={navStyle}>
-                <h2>Feed</h2>
+            <div style={nav}>
+                <h2>🔥 Feed</h2>
                 <button onClick={goToDashboard} style={backBtn}>Back</button>
             </div>
 
-            {/* POSTS GRID */}
-            <div style={gridStyle}>
+            {/* GRID */}
+            <div style={feed}>
                 {posts.map(post => (
 
                     <div
                         key={post.id}
-                        style={cardStyle}
+                        style={card}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = "scale(1.05)";
-                            e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.8)";
+                            e.currentTarget.style.boxShadow = "0 15px 30px rgba(0,0,0,0.5)";
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = "scale(1)";
-                            e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
+                            e.currentTarget.style.boxShadow = "none";
                         }}
                     >
 
-                        <h3>{post.title}</h3>
-                        <p>{post.content}</p>
+                        {/* PROFILE + NAME */}
+                        <div style={topRow}>
+                            <img
+                                src={
+                                    post.user?.profile_pic
+                                        ? `http://localhost:8080/uploads/${post.user.profile_pic}`
+                                        : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                }
+                                style={avatar}
+                                alt=""
+                            />
+                            <p style={username}>{post.user?.name || "User"}</p>
+                        </div>
+
+                        {/* TITLE */}
+                        <h3 style={title}>{post.title}</h3>
+
+                        {/* CONTENT */}
+                        <p style={content}>{post.content}</p>
 
                         {/* IMAGE */}
                         {post.image && (
                             <img
                                 src={`http://localhost:8080/uploads/${post.image}`}
-                                alt="post"
-                                style={imgStyle}
+                                style={postImg}
+                                onError={(e) => e.target.style.display = "none"}
+                                alt=""
                             />
+                        )}
+
+                        {/* DELETE BUTTON */}
+                        {post.user?.email === userEmail && (
+                            <button
+                                onClick={() => handleDelete(post.id)}
+                                style={deleteBtn}
+                            >
+                                🗑 Delete
+                            </button>
                         )}
 
                         {/* COMMENTS */}
                         <div>
-                            {comments[post.id]?.map((c) => (
-                                <div key={c.id} style={commentBox}>
+                            {comments[post.id]?.map(c => (
+                                <div key={c.id} style={comment}>
                                     💬 {c.content}
-
-                                    {(c.userEmail === userEmail || userEmail === "admin@gmail.com") && (
-                                        <button
-                                            style={deleteBtn}
-                                            onClick={() => handleDeleteComment(c.id, post.id)}
-                                        >
-                                            ✖
-                                        </button>
-                                    )}
                                 </div>
                             ))}
                         </div>
 
-                        {/* INPUT */}
-                        <div style={{ display: "flex", marginTop: "10px" }}>
+                        {/* COMMENT INPUT */}
+                        <div style={inputBox}>
                             <input
                                 value={commentInput[post.id] || ""}
                                 onChange={(e) =>
@@ -167,7 +166,7 @@ const Posts = ({ goToDashboard }) => {
                                     })
                                 }
                                 placeholder="Add comment..."
-                                style={inputStyle}
+                                style={input}
                             />
 
                             <button
@@ -186,3 +185,114 @@ const Posts = ({ goToDashboard }) => {
 };
 
 export default Posts;
+
+
+/* 🎨 STYLES */
+
+const main = {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #667eea, #764ba2)"
+};
+
+const nav = {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "15px 20px",
+    background: "#020617",
+    color: "white"
+};
+
+const backBtn = {
+    background: "#00c6ff",
+    border: "none",
+    padding: "6px 12px",
+    borderRadius: "6px",
+    cursor: "pointer"
+};
+
+const feed = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+    gap: "20px",
+    padding: "20px"
+};
+
+const card = {
+    background: "#1e293b",
+    padding: "15px",
+    borderRadius: "12px",
+    color: "white",
+    transition: "0.3s"
+};
+
+const topRow = {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px"
+};
+
+const avatar = {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+    objectFit: "cover"
+};
+
+const username = {
+    fontWeight: "bold"
+};
+
+const title = {
+    textAlign: "center",
+    marginTop: "10px"
+};
+
+const content = {
+    textAlign: "center"
+};
+
+const postImg = {
+    width: "100%",
+    marginTop: "10px",
+    borderRadius: "8px"
+};
+
+const deleteBtn = {
+    marginTop: "10px",
+    background: "#ef4444",
+    border: "none",
+    padding: "6px 10px",
+    borderRadius: "6px",
+    color: "white",
+    cursor: "pointer"
+};
+
+const comment = {
+    background: "#334155",
+    padding: "6px",
+    marginTop: "5px",
+    borderRadius: "6px"
+};
+
+const inputBox = {
+    display: "flex",
+    marginTop: "10px"
+};
+
+const input = {
+    flex: 1,
+    padding: "6px",
+    borderRadius: "6px",
+    border: "none",
+    color: "black",
+    background: "white"
+};
+
+const postBtn = {
+    marginLeft: "5px",
+    background: "#00c6ff",
+    border: "none",
+    padding: "6px",
+    borderRadius: "6px",
+    cursor: "pointer"
+};

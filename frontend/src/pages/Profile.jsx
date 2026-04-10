@@ -6,7 +6,8 @@ const Profile = ({ goToDashboard }) => {
     const [user, setUser] = useState({});
     const [posts, setPosts] = useState([]);
     const [editPost, setEditPost] = useState(null);
-    const [editFile, setEditFile] = useState(null);
+    const [likedPosts, setLikedPosts] = useState({});
+    const [followed, setFollowed] = useState({});
 
     useEffect(() => {
         fetchProfile();
@@ -29,49 +30,63 @@ const Profile = ({ goToDashboard }) => {
             setPosts(postRes.data.reverse());
 
         } catch (err) {
-            console.error("PROFILE ERROR:", err);
+            console.error(err);
         }
     };
 
+    // DELETE
     const handleDelete = async (id) => {
-        try {
-            const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
-            await API.delete(`/posts/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+        await API.delete(`/posts/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
 
-            setPosts(prev => prev.filter(p => p.id !== id));
-
-        } catch (err) {
-            console.error("DELETE ERROR:", err);
-        }
+        setPosts(prev => prev.filter(p => p.id !== id));
     };
 
+    // UPDATE (WITH IMAGE)
     const handleUpdate = async () => {
-        try {
-            const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
-            const formData = new FormData();
-            formData.append("title", editPost.title);
-            formData.append("content", editPost.content);
+        await API.put(`/posts/${editPost.id}`, {
+            title: editPost.title,
+            content: editPost.content,
+            image: editPost.image   // ✅ FIX
+        }, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
 
-            if (editFile) {
-                formData.append("file", editFile);
-            }
+        fetchProfile();
+        setEditPost(null);
+    };
 
-            await API.put(`/posts/${editPost.id}`, formData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+    // LIKE TOGGLE
+    const handleLike = async (postId) => {
+        const token = localStorage.getItem("token");
 
-            await fetchProfile();
+        await API.post(`/likes/${postId}`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
 
-            setEditPost(null);
-            setEditFile(null);
+        setLikedPosts(prev => ({
+            ...prev,
+            [postId]: !prev[postId]
+        }));
+    };
 
-        } catch (err) {
-            console.error("UPDATE ERROR:", err);
-        }
+    // FOLLOW TOGGLE
+    const handleFollow = async (userId) => {
+        const token = localStorage.getItem("token");
+
+        await API.post(`/follow/${userId}`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        setFollowed(prev => ({
+            ...prev,
+            [userId]: !prev[userId]
+        }));
     };
 
     return (
@@ -83,60 +98,77 @@ const Profile = ({ goToDashboard }) => {
                 <button onClick={goToDashboard} style={backBtn}>Back</button>
             </div>
 
-            <div style={{ padding: "25px" }}>
+            <div style={{ padding: "20px" }}>
                 <h3>Welcome back!</h3>
 
                 <h3 style={{ marginTop: "20px" }}>My Posts</h3>
 
-                {posts.length === 0 ? (
-                    <p>No posts yet</p>
-                ) : (
-                    <div style={gridStyle}>
-                        {posts.map(post => (
-                            <div
-                                key={post.id}
-                                style={cardStyle}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = "scale(1.05)";
-                                    e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.8)";
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = "scale(1)";
-                                    e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
-                                }}
-                            >
+                <div style={gridStyle}>
+                    {posts.map(post => (
 
+                        <div key={post.id} style={cardStyle}>
+
+                            {/* LEFT PROFILE */}
+                            <div style={{ textAlign: "center" }}>
+                                <img
+                                    src={
+                                        user.profile_pic
+                                            ? `http://localhost:8080/uploads/${user.profile_pic}`
+                                            : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                    }
+                                    style={profileImg}
+                                />
+                                <p style={{ fontSize: "12px" }}>{user.name}</p>
+                            </div>
+
+                            {/* CENTER */}
+                            <div style={{ flex: 1, textAlign: "center" }}>
                                 <h3>{post.title}</h3>
                                 <p>{post.content}</p>
 
                                 {post.image && (
                                     <img
                                         src={`http://localhost:8080/uploads/${post.image}`}
-                                        alt="post"
-                                        style={imgStyle}
+                                        style={postImg}
+                                        onError={(e)=> e.target.style.display="none"}
                                     />
                                 )}
+                            </div>
 
-                                <div style={{ marginTop: "12px" }}>
-                                    <button
-                                        style={editBtn}
-                                        onClick={() => setEditPost(post)}
-                                    >
-                                        Edit
-                                    </button>
+                            {/* RIGHT */}
+                            <div>
 
-                                    <button
-                                        style={deleteBtn}
-                                        onClick={() => handleDelete(post.id)}
-                                    >
-                                        Delete
-                                    </button>
+                                <button onClick={()=>setEditPost(post)} style={editBtn}>
+                                    Edit
+                                </button>
+
+                                <button onClick={()=>handleDelete(post.id)} style={deleteBtn}>
+                                    Delete
+                                </button>
+
+                                <button
+                                    onClick={()=>handleFollow(post.user.id)}
+                                    style={followBtn}
+                                >
+                                    {followed[post.user.id] ? "Unfollow" : "Follow"}
+                                </button>
+
+                                <div
+                                    onClick={()=>handleLike(post.id)}
+                                    style={{
+                                        fontSize: "22px",
+                                        cursor: "pointer",
+                                        color: likedPosts[post.id] ? "red" : "white"
+                                    }}
+                                >
+                                    ❤️
                                 </div>
 
                             </div>
-                        ))}
-                    </div>
-                )}
+
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* EDIT MODAL */}
@@ -147,166 +179,71 @@ const Profile = ({ goToDashboard }) => {
                         <h3>Edit Post</h3>
 
                         <input
-                            placeholder="Enter title..."
                             value={editPost.title}
-                            onChange={(e) =>
-                                setEditPost({ ...editPost, title: e.target.value })
-                            }
+                            onChange={(e)=>setEditPost({...editPost, title:e.target.value})}
                             style={input}
                         />
 
                         <textarea
-                            placeholder="Enter content..."
                             value={editPost.content}
-                            onChange={(e) =>
-                                setEditPost({ ...editPost, content: e.target.value })
-                            }
+                            onChange={(e)=>setEditPost({...editPost, content:e.target.value})}
                             style={input}
                         />
 
+                        {/* ✅ IMAGE INPUT ADDED */}
                         <input
-                            type="file"
-                            onChange={(e) => setEditFile(e.target.files[0])}
-                            style={{ marginBottom: "10px", color: "white" }}
+                            type="text"
+                            placeholder="Image name (optional)"
+                            value={editPost.image || ""}
+                            onChange={(e)=>setEditPost({...editPost, image:e.target.value})}
+                            style={input}
                         />
 
-                        <div style={{ display: "flex", gap: "10px" }}>
-                            <button
-                                style={saveBtn}
-                                onMouseEnter={(e)=> e.target.style.opacity=0.8}
-                                onMouseLeave={(e)=> e.target.style.opacity=1}
-                                onClick={handleUpdate}
-                            >
-                                Update
-                            </button>
+                        <button style={saveBtn} onClick={handleUpdate}>
+                            Update
+                        </button>
 
-                            <button
-                                style={cancelBtn}
-                                onClick={() => setEditPost(null)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
+                        <button style={cancelBtn} onClick={()=>setEditPost(null)}>
+                            Cancel
+                        </button>
 
                     </div>
                 </div>
             )}
+
         </div>
     );
 };
 
 export default Profile;
 
-/* ================= STYLES ================= */
 
-const mainStyle = {
-    minHeight: "100vh",
-    background: "linear-gradient(135deg, #0f172a, #1e293b)",
-    color: "white"
-};
-
-const navStyle = {
-    background: "#020617",
-    padding: "12px 20px",
-    display: "flex",
-    justifyContent: "space-between"
-};
-
-const backBtn = {
-    background: "#38bdf8",
-    border: "none",
-    padding: "8px 14px",
-    borderRadius: "6px",
-    color: "white",
-    cursor: "pointer"
-};
+/* 🎨 STYLES */
 
 const gridStyle = {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-    gap: "25px",
+    gridTemplateColumns: "repeat(2, 1fr)",  // ✅ 2 per row
+    gap: "20px",
     marginTop: "20px"
 };
 
 const cardStyle = {
-    background: "#0f172a",
-    padding: "20px",
-    borderRadius: "14px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
-    transition: "all 0.3s ease",
-    cursor: "pointer"
-};
-
-const imgStyle = {
-    width: "100%",
-    height: "200px",
-    objectFit: "cover",
-    borderRadius: "10px",
-    marginTop: "10px"
-};
-
-const editBtn = {
-    background: "#f59e0b",
-    border: "none",
-    padding: "6px 10px",
-    borderRadius: "6px",
-    marginRight: "8px",
-    cursor: "pointer",
-    color: "white"
-};
-
-const deleteBtn = {
-    background: "#ef4444",
-    border: "none",
-    padding: "6px 10px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    color: "white"
-};
-
-const modalBg = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    background: "rgba(0,0,0,0.7)",
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    gap: "10px",
+    padding: "15px",
+    borderRadius: "10px",
+    background: "#1e293b"
 };
 
-const modalBox = {
-    background: "#020617",
-    padding: "20px",
-    borderRadius: "12px",
-    width: "300px"
+const profileImg = {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%"
 };
 
-const input = {
+const postImg = {
     width: "100%",
-    padding: "8px",
-    marginBottom: "10px",
-    borderRadius: "6px",
-    border: "none",
-    background: "#1e293b",
-    color: "white"
-};
-
-const saveBtn = {
-    background: "#22c55e",
-    border: "none",
-    padding: "8px",
-    borderRadius: "6px",
-    color: "white",
-    cursor: "pointer"
-};
-
-const cancelBtn = {
-    background: "#ef4444",
-    border: "none",
-    padding: "8px",
-    borderRadius: "6px",
-    color: "white",
-    cursor: "pointer"
+    height: "120px",
+    objectFit: "cover",
+    borderRadius: "8px"
 };

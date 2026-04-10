@@ -28,17 +28,14 @@ const CreatePost = ({ refreshPosts, goToFeed }) => {
 
             const token = localStorage.getItem("token");
 
-            const formData = new FormData();
-            formData.append("title", form.title);
-            formData.append("content", form.content);
+            // ✅ FIX: SEND JSON ONLY
+            const data = {
+                title: form.title,
+                content: form.content,
+                image: localStorage.getItem("profileImage") || null
+            };
 
-            // 🔥 USE PROFILE IMAGE NAME
-            const profileImage = localStorage.getItem("profileImage");
-            if (profileImage) {
-                formData.append("imageName", profileImage);
-            }
-
-            await API.post("/posts", formData, {
+            await API.post("/posts", data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -47,12 +44,11 @@ const CreatePost = ({ refreshPosts, goToFeed }) => {
             setForm({ title: "", content: "" });
             setSuccess("Post created successfully!");
 
-            // 🔥 refresh + redirect
             if (refreshPosts) refreshPosts();
 
             setTimeout(() => {
                 if (goToFeed) goToFeed();
-            }, 800);
+            }, 500);
 
         } catch (err) {
             console.error("CREATE POST ERROR:", err.response?.data || err.message);
@@ -78,11 +74,7 @@ const CreatePost = ({ refreshPosts, goToFeed }) => {
                 Create Post ✍️
             </h2>
 
-            {success && (
-                <p style={successStyle}>
-                    {success}
-                </p>
-            )}
+            {success && <p style={successStyle}>{success}</p>}
 
             <form onSubmit={handleSubmit}>
 
@@ -133,14 +125,12 @@ const inputStyle = {
     borderRadius: "8px",
     border: "1px solid rgba(255,255,255,0.3)",
     background: "rgba(0,0,0,0.5)",
-    color: "#ffffff",
-    outline: "none"
+    color: "#ffffff"
 };
 
 const textareaStyle = {
     ...inputStyle,
-    height: "100px",
-    resize: "none"
+    height: "100px"
 };
 
 const buttonStyle = {
