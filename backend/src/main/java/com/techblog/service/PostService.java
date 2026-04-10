@@ -16,7 +16,7 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
-    // ✅ CREATE POST
+    // ✅ CREATE / UPDATE POST (same method used)
     public Post createPost(Post post) {
         return postRepository.save(post);
     }
@@ -37,7 +37,7 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
-    // ✅ UPDATE POST
+    // ✅ UPDATE POST (kept for consistency but not used in controller)
     public Post updatePost(Integer id, Post updatedPost) {
         Post existingPost = getPostById(id);
 
@@ -53,9 +53,8 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    // 🔥🔥 NEW METHOD ADDED (FOR PROFILE PAGE)
+    // ✅ GET POSTS BY USER
     public List<Post> getPostsByUser(String email) {
-
         return postRepository.findByUserEmail(email);
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +26,9 @@ public class PostController {
 
     @Autowired
     private UserRepository userRepository;
+
+    // 🔥 IMAGE PATH
+    private final String UPLOAD_DIR = "D:/Techblog/techblog/uploads/";
 
     // ✅ GET ALL POSTS
     @GetMapping
@@ -46,44 +48,32 @@ public class PostController {
         return postService.getPostById(id);
     }
 
-    // ✅ CREATE POST
+    // 🔥🔥🔥 FINAL FIXED CREATE POST (JSON BASED)
     @PostMapping
-    public Post createPost(@RequestParam("title") String title,
-                           @RequestParam("content") String content,
-                           @RequestParam(value = "file", required = false) MultipartFile file,
-                           Authentication authentication) throws Exception {
+    public Post createPost(@RequestBody Post post,
+                           Authentication authentication) {
 
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Post post = new Post();
-        post.setTitle(title);
-        post.setContent(content);
+        // ✅ IMPORTANT
         post.setUser(user);
 
-        // 🔥 IMAGE UPLOAD
-        if (file != null && !file.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
-            Path path = Paths.get("uploads/" + fileName);
-            Files.createDirectories(path.getParent());
-            Files.write(path, file.getBytes());
-
-            post.setImage(fileName);
+        // ✅ prevent null image issue
+        if (post.getImage() == null) {
+            post.setImage("");
         }
 
         return postService.createPost(post);
     }
 
-    // 🔥 UPDATED: UPDATE POST (WITH IMAGE)
+    // 🔥 UPDATE POST (JSON BASED)
     @PutMapping("/{id}")
     public Post updatePost(@PathVariable Integer id,
-                           @RequestParam("title") String title,
-                           @RequestParam("content") String content,
-                           @RequestParam(value = "file", required = false) MultipartFile file,
-                           Authentication authentication) throws Exception {
+                           @RequestBody Post updatedPost,
+                           Authentication authentication) {
 
         String email = authentication.getName();
 
@@ -92,36 +82,23 @@ public class PostController {
 
         Post existingPost = postService.getPostById(id);
 
+        // ✅ SECURITY CHECK
         if (!existingPost.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("You are not allowed to update this post");
         }
 
-        existingPost.setTitle(title);
-        existingPost.setContent(content);
+        existingPost.setTitle(updatedPost.getTitle());
+        existingPost.setContent(updatedPost.getContent());
 
-        // 🔥 IMAGE UPDATE
-        if (file != null && !file.isEmpty()) {
-
-            // ❌ DELETE OLD IMAGE
-            if (existingPost.getImage() != null) {
-                Path oldPath = Paths.get("uploads/" + existingPost.getImage());
-                Files.deleteIfExists(oldPath);
-            }
-
-            // ✅ SAVE NEW IMAGE
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
-            Path path = Paths.get("uploads/" + fileName);
-            Files.createDirectories(path.getParent());
-            Files.write(path, file.getBytes());
-
-            existingPost.setImage(fileName);
+        // ✅ OPTIONAL IMAGE UPDATE
+        if (updatedPost.getImage() != null) {
+            existingPost.setImage(updatedPost.getImage());
         }
 
         return postService.createPost(existingPost);
     }
 
-    // 🔥 UPDATED: DELETE POST (WITH IMAGE DELETE)
+    // 🔥 DELETE POST
     @DeleteMapping("/{id}")
     public String deletePost(@PathVariable Integer id,
                              Authentication authentication) throws Exception {
@@ -138,9 +115,9 @@ public class PostController {
             throw new RuntimeException("You are not allowed to delete this post");
         }
 
-        // 🔥 DELETE IMAGE
-        if (post.getImage() != null) {
-            Path path = Paths.get("uploads/" + post.getImage());
+        // ✅ DELETE IMAGE FILE
+        if (post.getImage() != null && !post.getImage().isEmpty()) {
+            Path path = Paths.get(UPLOAD_DIR + post.getImage());
             Files.deleteIfExists(path);
         }
 

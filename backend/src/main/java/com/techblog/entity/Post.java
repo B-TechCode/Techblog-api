@@ -24,14 +24,20 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    // 🔥 ADD THIS FIELD
+    // ✅ Image field
     @Column(name = "image")
     private String image;
 
-    // 🔥 IMPORTANT FIX (PREVENT LOOP)
-    @ManyToOne
+    // ✅ FIX: prevent infinite loop + allow safe JSON
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"password", "otp", "otpExpiry"})
+    @JsonIgnoreProperties({
+            "password",
+            "otp",
+            "otpExpiry",
+            "posts",
+            "comments"
+    })
     private User user;
 
     private LocalDateTime createdAt;

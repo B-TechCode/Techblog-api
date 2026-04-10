@@ -34,25 +34,25 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    // 🔥🔥🔥 UPDATED: GET COMMENT BY ID
+    // ✅ GET COMMENT BY ID
     public Comment getCommentById(Integer id) {
         return commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
     }
 
-    // 🔥🔥🔥 UPDATED: DELETE COMMENT
+    // ✅ DELETE COMMENT
     public void deleteComment(Integer id) {
         commentRepository.deleteById(id);
     }
 
-    // 🔥 COMMON MAPPER
+    // ✅ COMMON MAPPER (SAFE)
     private CommentResponse mapToDTO(Comment comment) {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .userId(comment.getUser().getId())
-                .userName(comment.getUser().getName())
-                .userEmail(comment.getUser().getEmail())
+                .userId(comment.getUser() != null ? comment.getUser().getId() : null)
+                .userName(comment.getUser() != null ? comment.getUser().getName() : "Unknown")
+                .userEmail(comment.getUser() != null ? comment.getUser().getEmail() : null)
                 .createdAt(comment.getCreatedAt())
                 .build();
     }

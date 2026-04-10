@@ -8,15 +8,15 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    // ✅ File Upload Access
+    // ✅ File Upload Access (FIXED)
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:D:/Techblog/techblog/uploads/");
+                .addResourceLocations("file:uploads/");
     }
 
-    // ✅ CORS Configuration (VERY IMPORTANT)
+    // ✅ CORS Configuration
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 
