@@ -8,47 +8,69 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 public class SecurityConfig {
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // ❌ Disable CSRF (for APIs)
+
+                // ❌ Disable CSRF
                 .csrf(csrf -> csrf.disable())
 
-                // 🔥 Enable CORS
+                // ✅ Enable CORS
                 .cors(cors -> {})
 
-                // 🔐 Stateless session (JWT)
+                // ✅ Stateless JWT
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // 🔐 Authorization rules
+                // 🔐 Authorization
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ VERY IMPORTANT: Allow preflight requests (FIX)
+                        // ✅ Allow OPTIONS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // ✅ Public APIs
+                        // ✅ PUBLIC APIs
                         .requestMatchers(
+
                                 "/api/users/login",
                                 "/api/users/register",
                                 "/api/users/verify",
-                                "/uploads/**"
+
+                                // ✅ PROFILE IMAGE ACCESS
+                                "/uploads/**",
+
+                                // ✅ FILE ACCESS
+                                "/api/files/**"
+
                         ).permitAll()
 
-                        // 🔐 All others secured
+                        // ✅ SECURE ALL OTHER APIs
                         .anyRequest().authenticated()
                 )
 
-                // 🔥 JWT filter
-                .addFilterBefore(new JwtFilter(),
-                        UsernamePasswordAuthenticationFilter.class);
+                // ✅ JWT FILTER
+                .addFilterBefore(
+                        jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
+    }
+
+    // 🔐 PASSWORD ENCODER
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+
+
 @Service
 public class UserService {
 
@@ -21,6 +23,11 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+
+    @Autowired
+    private EmailService emailService;
+
 
     @Autowired
     private RateLimiterService rateLimiterService;
@@ -46,6 +53,11 @@ public class UserService {
         user.setOtp(otp);
         user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
         user.setIsVerified(false);
+
+        emailService.sendOtp(
+                user.getEmail(),
+                otp
+        );
 
         // 👉 PRINT OTP (IMPORTANT)
         System.out.println("🔥 OTP for " + user.getEmail() + " = " + otp);
@@ -125,4 +137,27 @@ public class UserService {
         logger.error("Invalid login attempt for email: {}", email);
         throw new RuntimeException("Invalid Email or Password");
     }
+
+    // ================= UPDATE PROFILE =================
+
+    public User updateProfile(
+            String email,
+            User updatedUser
+    ) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        user.setName(updatedUser.getName());
+
+        user.setAbout(updatedUser.getAbout());
+
+        user.setGender(updatedUser.getGender());
+
+        return userRepository.save(user);
+    }
+
+
+
 }

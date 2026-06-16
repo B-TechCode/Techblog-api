@@ -13,18 +13,35 @@ public class FollowService {
     @Autowired
     private FollowRepository followRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public String toggleFollow(User follower, User following) {
 
         return followRepository.findByFollowerAndFollowing(follower, following)
                 .map(follow -> {
+
                     followRepository.delete(follow);
+
                     return "Unfollowed";
                 })
                 .orElseGet(() -> {
+
                     Follow f = new Follow();
+
                     f.setFollower(follower);
+
                     f.setFollowing(following);
+
                     followRepository.save(f);
+
+                    // ================= NOTIFICATION =================
+
+                    notificationService.send(
+                            following,
+                            follower.getName() + " started following you"
+                    );
+
                     return "Followed";
                 });
     }

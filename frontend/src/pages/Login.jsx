@@ -1,153 +1,224 @@
 import { useState } from "react";
 import { loginUser } from "../services/authService";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const Login = ({ goToHome, goToRegister }) => {
+const Login = ({ goToRegister, goToDashboard }) => {
 
     const [form, setForm] = useState({
         email: "",
-        password: "",
+        password: ""
     });
 
-    const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [success, setSuccess] = useState(""); // 🔥 NEW
-
-    // 🔥 HANDLE CHANGE
-    const handleChange = (field, value) => {
-        setForm({ ...form, [field]: value });
-
-        if (errors[field]) {
-            setErrors({ ...errors, [field]: "" });
-        }
-    };
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
-        let newErrors = {};
-
-        if (!form.email.trim()) newErrors.email = "Email is required";
-        if (!form.password.trim()) newErrors.password = "Password is required";
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (form.email && !emailRegex.test(form.email)) {
-            newErrors.email = "Invalid email format";
-        }
-
-        setErrors(newErrors);
-        if (Object.keys(newErrors).length > 0) return;
-
         try {
+
             setLoading(true);
 
-            const res = await loginUser(form);
+            const data = await loginUser(form);
 
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("userEmail", form.email);
+            localStorage.setItem("token", data.token);
 
-            // ❌ REMOVE alert
-            // alert("Login Successful!");
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
 
-            // ✅ SHOW SUCCESS MESSAGE
-            setSuccess("Login successful!");
-            localStorage.setItem("userEmail", res.data.email);
+            alert("Login successful ");
 
-            // 🔥 DELAY FOR UX
-            setTimeout(() => {
-                goToHome();
-            }, 1200);
+            goToDashboard();
 
         } catch (err) {
-            console.error(err.response?.data || err.message);
-            setSuccess("");
-            alert("Invalid Credentials or Not Verified");
+
+            console.error(err);
+
+            alert(
+                err.response?.data?.message ||
+                err.response?.data ||
+                "Login failed"
+            );
+
         } finally {
+
             setLoading(false);
         }
     };
 
     return (
+
         <div className="app-container">
 
-            <div className="card">
+            <div style={wrapper}>
 
-                <h2 style={{ marginBottom: "15px" }}>Welcome Back</h2>
+                {/* ================= LEFT SECTION ================= */}
 
-                {/* 🔥 SUCCESS MESSAGE */}
-                {success && (
-                    <p style={{
-                        background: "#28a745",
-                        color: "white",
-                        padding: "10px",
-                        borderRadius: "6px",
-                        marginBottom: "10px",
-                        fontSize: "14px"
-                    }}>
-                        {success}
+                <div style={leftSection}>
+
+                    <h1 style={logo}>
+                        TechBlog
+                    </h1>
+
+                    <h2 style={heading}>
+                        Welcome Back
+                    </h2>
+
+                    <p style={description}>
+                        Login to continue sharing your ideas,
+                        posts and connect with people.
                     </p>
-                )}
 
-                <form onSubmit={handleSubmit}>
+                </div>
 
-                    {/* EMAIL */}
-                    <input
-                        type="email"
-                        className="input"
-                        placeholder="Email Address"
-                        value={form.email}
-                        autoComplete="off"
-                        onChange={(e)=>handleChange("email", e.target.value)}
-                    />
-                    {errors.email && <p style={{color:"#ff6b6b",fontSize:"12px"}}>{errors.email}</p>}
+                {/* ================= RIGHT SECTION ================= */}
 
-                    {/* PASSWORD */}
-                    <div style={{ position: "relative" }}>
+                <div className="card" style={cardStyle}>
+
+                    <h2 style={title}>
+                        Login
+                    </h2>
+
+                    <form onSubmit={handleSubmit}>
+
+                        {/* ================= EMAIL ================= */}
+
                         <input
-                            type={showPassword ? "text" : "password"}
+                            type="email"
+                            placeholder="Email Address"
                             className="input"
-                            placeholder="Password"
-                            value={form.password}
-                            autoComplete="off"
-                            onChange={(e)=>handleChange("password", e.target.value)}
+                            value={form.email}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    email: e.target.value
+                                })
+                            }
                         />
 
-                        <span
-                            onClick={()=>setShowPassword(!showPassword)}
-                            style={{
-                                position: "absolute",
-                                right: "12px",
-                                top: "50%",
-                                transform: "translateY(-50%)",
-                                cursor: "pointer",
-                                color: "#333",   // 🔥 FIXED VISIBILITY
-                                fontSize: "16px"
-                            }}
+                        {/* ================= PASSWORD ================= */}
+
+                        <div className="password-box">
+
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Password"
+                                className="input password-input"
+                                value={form.password}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        password: e.target.value
+                                    })
+                                }
+                            />
+
+                            <span
+                                className="eye-icon"
+                                onClick={() =>
+                                    setShowPassword(!showPassword)
+                                }
+                            >
+                                {showPassword ? "🙈" : "👁️"}
+                            </span>
+
+                        </div>
+
+                        {/* ================= BUTTON ================= */}
+
+                        <button
+                            className="btn"
+                            disabled={loading}
                         >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            {loading
+                                ? "Logging in..."
+                                : "Login"}
+                        </button>
+
+                    </form>
+
+                    {/* ================= REGISTER LINK ================= */}
+
+                    <p style={bottomText}>
+
+                        Don’t have an account?{" "}
+
+                        <span
+                            className="link"
+                            onClick={goToRegister}
+                        >
+                            Register
                         </span>
-                    </div>
-                    {errors.password && <p style={{color:"#ff6b6b",fontSize:"12px"}}>{errors.password}</p>}
 
-                    {/* BUTTON */}
-                    <button className="btn" disabled={loading}>
-                        {loading ? "Logging in..." : "Login"}
-                    </button>
+                    </p>
 
-                </form>
-
-                {/* REGISTER LINK */}
-                <p style={{ marginTop: "15px", fontSize: "14px" }}>
-                    Don't have an account?{" "}
-                    <span className="link" onClick={goToRegister}>
-                        Register
-                    </span>
-                </p>
+                </div>
 
             </div>
+
         </div>
     );
 };
 
 export default Login;
+
+
+/* ================= STYLES ================= */
+
+const wrapper = {
+    width: "100%",
+    maxWidth: "1200px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "60px",
+    flexWrap: "wrap",
+    padding: "20px"
+};
+
+const leftSection = {
+    flex: 1,
+    minWidth: "300px",
+    color: "white"
+};
+
+const logo = {
+    fontSize: "40px",
+    fontWeight: "700",
+    marginBottom: "20px",
+    background: "linear-gradient(to right, #38bdf8, #2563eb)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent"
+};
+
+const heading = {
+    fontSize: "32px",
+    marginBottom: "15px",
+    lineHeight: "1.2"
+};
+
+const description = {
+    fontSize: "16px",
+    lineHeight: "1.8",
+    color: "rgba(255,255,255,0.75)",
+    maxWidth: "500px"
+};
+
+const cardStyle = {
+    flex: 1,
+    minWidth: "320px",
+    maxWidth: "430px"
+};
+
+const title = {
+    marginBottom: "25px",
+    fontSize: "30px"
+};
+
+const bottomText = {
+    marginTop: "18px",
+    fontSize: "14px",
+    color: "rgba(255,255,255,0.75)"
+};

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../services/authService";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const Register = ({ goToVerify, goToLogin }) => {
+const Register = ({ goToLogin, goToVerify }) => {
 
     const [form, setForm] = useState({
         name: "",
@@ -11,160 +10,255 @@ const Register = ({ goToVerify, goToLogin }) => {
         gender: ""
     });
 
-    const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
-    const [success, setSuccess] = useState("");   // 🔥 NEW
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
-        let newErrors = {};
-
-        if (!form.name.trim()) newErrors.name = "Name is required";
-        if (!form.email.trim()) newErrors.email = "Email is required";
-        if (!form.password.trim()) newErrors.password = "Password is required";
-        if (!form.gender) newErrors.gender = "Gender is required";
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (form.email && !emailRegex.test(form.email)) {
-            newErrors.email = "Invalid email format";
-        }
-
-        if (form.password && form.password.length < 6) {
-            newErrors.password = "Min 6 characters required";
-        }
-
-        setErrors(newErrors);
-        if (Object.keys(newErrors).length > 0) return;
-
         try {
-            const res = await registerUser(form);
 
-            // ❌ remove alert
-            // alert("Registered! Check OTP");
+            setLoading(true);
 
-            // ✅ SHOW SUCCESS UI
-            setSuccess("Registered successfully! Please verify OTP.");
+            await registerUser(form);
 
-            console.log(res.data);
+            localStorage.setItem("verifyEmail", form.email);
 
-            // 🔥 small delay for UX
-            setTimeout(() => {
-                goToVerify();
-            }, 1500);
+            alert("OTP sent to your email ");
+
+            goToVerify();
 
         } catch (err) {
-            console.error(err.response?.data || err.message);
-            setSuccess(""); // clear success
-            alert(err.response?.data?.message || "Registration Failed");
-        }
-    };
 
-    const handleChange = (field, value) => {
-        setForm({ ...form, [field]: value });
+            console.error(err);
 
-        if (errors[field]) {
-            setErrors({ ...errors, [field]: "" });
+            alert(
+                err.response?.data?.message ||
+                err.response?.data ||
+                "Register failed"
+            );
+
+        } finally {
+
+            setLoading(false);
         }
     };
 
     return (
+
         <div className="app-container">
 
-            <div className="card">
+            <div style={wrapper}>
 
-                <h2 style={{ marginBottom: "15px" }}>Create Account</h2>
+                {/* ================= LEFT ================= */}
 
-                {/* 🔥 SUCCESS MESSAGE */}
-                {success && (
-                    <p style={{
-                        background: "#28a745",
-                        color: "white",
-                        padding: "10px",
-                        borderRadius: "6px",
-                        marginBottom: "10px",
-                        fontSize: "14px"
-                    }}>
-                        {success}
+                <div style={leftSection}>
+
+                    <h1 style={logo}>
+                        TechBlog
+                    </h1>
+
+                    <h2 style={heading}>
+                        Create Your Account
+                    </h2>
+
+                    <p style={description}>
+                        Join TechBlog and start sharing your
+                        thoughts, ideas, technology posts and
+                        connect with developers around the world.
                     </p>
-                )}
 
-                <form onSubmit={handleSubmit}>
+                </div>
 
-                    {/* NAME */}
-                    <input
-                        className="input"
-                        placeholder="Full Name"
-                        value={form.name}
-                        onChange={(e)=>handleChange("name", e.target.value)}
-                    />
-                    {errors.name && <p style={{color:"#ff6b6b",fontSize:"12px"}}>{errors.name}</p>}
+                {/* ================= RIGHT ================= */}
 
-                    {/* EMAIL */}
-                    <input
-                        className="input"
-                        placeholder="Email Address"
-                        value={form.email}
-                        onChange={(e)=>handleChange("email", e.target.value)}
-                    />
-                    {errors.email && <p style={{color:"#ff6b6b",fontSize:"12px"}}>{errors.email}</p>}
+                <div className="card" style={cardStyle}>
 
-                    {/* PASSWORD */}
-                    <div style={{ position: "relative" }}>
+                    <h2 style={title}>
+                        Register
+                    </h2>
+
+                    <form onSubmit={handleSubmit}>
+
+                        {/* ================= NAME ================= */}
+
                         <input
-                            type={showPassword ? "text" : "password"}
+                            type="text"
+                            placeholder="Full Name"
                             className="input"
-                            placeholder="Password"
-                            value={form.password}
-                            onChange={(e)=>handleChange("password", e.target.value)}
+                            value={form.name}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    name: e.target.value
+                                })
+                            }
                         />
 
-                        <span
-                            onClick={() => setShowPassword(!showPassword)}
-                            style={{
-                                position: "absolute",
-                                right: "12px",
-                                top: "50%",
-                                transform: "translateY(-50%)",
-                                cursor: "pointer",
-                                color: "#333",   // 🔥 FIXED VISIBILITY
-                                fontSize: "16px"
-                            }}
+                        {/* ================= EMAIL ================= */}
+
+                        <input
+                            type="email"
+                            placeholder="Email Address"
+                            className="input"
+                            value={form.email}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    email: e.target.value
+                                })
+                            }
+                        />
+
+                        {/* ================= PASSWORD ================= */}
+
+                        <div className="password-box">
+
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Password"
+                                className="input password-input"
+                                value={form.password}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        password: e.target.value
+                                    })
+                                }
+                            />
+
+                            <span
+                                className="eye-icon"
+                                onClick={() =>
+                                    setShowPassword(!showPassword)
+                                }
+                            >
+                                {showPassword ? "🙈" : "👁️"}
+                            </span>
+
+                        </div>
+
+                        {/* ================= GENDER ================= */}
+
+                        <select
+                            className="input"
+                            value={form.gender}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    gender: e.target.value
+                                })
+                            }
                         >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+
+                            <option value="">
+                                Select Gender
+                            </option>
+
+                            <option value="Male">
+                                Male
+                            </option>
+
+                            <option value="Female">
+                                Female
+                            </option>
+
+                        </select>
+
+                        {/* ================= BUTTON ================= */}
+
+                        <button
+                            className="btn"
+                            disabled={loading}
+                        >
+                            {loading
+                                ? "Registering..."
+                                : "Create Account"}
+                        </button>
+
+                    </form>
+
+                    {/* ================= LOGIN LINK ================= */}
+
+                    <p style={bottomText}>
+
+                        Already have an account?{" "}
+
+                        <span
+                            className="link"
+                            onClick={goToLogin}
+                        >
+                            Login
                         </span>
-                    </div>
-                    {errors.password && <p style={{color:"#ff6b6b",fontSize:"12px"}}>{errors.password}</p>}
 
-                    {/* GENDER */}
-                    <select
-                        className="input"
-                        value={form.gender}
-                        onChange={(e)=>handleChange("gender", e.target.value)}
-                    >
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                    {errors.gender && <p style={{color:"#ff6b6b",fontSize:"12px"}}>{errors.gender}</p>}
+                    </p>
 
-                    <button className="btn">
-                        Register
-                    </button>
-
-                </form>
-
-                <p style={{ marginTop: "15px", fontSize: "14px" }}>
-                    Already have an account?{" "}
-                    <span className="link" onClick={goToLogin}>
-                        Sign In
-                    </span>
-                </p>
+                </div>
 
             </div>
+
         </div>
     );
 };
 
 export default Register;
+
+
+/* ================= STYLES ================= */
+
+const wrapper = {
+    width: "100%",
+    maxWidth: "1200px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "60px",
+    flexWrap: "wrap",
+    padding: "20px"
+};
+
+const leftSection = {
+    flex: 1,
+    minWidth: "300px",
+    color: "white"
+};
+
+const logo = {
+    fontSize: "40px",
+    fontWeight: "700",
+    marginBottom: "20px",
+    background: "linear-gradient(to right, #38bdf8, #2563eb)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent"
+};
+
+const heading = {
+    fontSize: "32px",
+    marginBottom: "15px",
+    lineHeight: "1.2"
+};
+
+const description = {
+    fontSize: "16px",
+    lineHeight: "1.8",
+    color: "rgba(255,255,255,0.75)",
+    maxWidth: "500px"
+};
+
+const cardStyle = {
+    flex: 1,
+    minWidth: "320px",
+    maxWidth: "430px"
+};
+
+const title = {
+    marginBottom: "25px",
+    fontSize: "30px"
+};
+
+const bottomText = {
+    marginTop: "18px",
+    fontSize: "14px",
+    color: "rgba(255,255,255,0.75)"
+};

@@ -9,7 +9,15 @@ import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Like, Integer> {
 
+    // 🔍 Find existing like
     Optional<Like> findByUserAndPost(User user, Post post);
 
+    // ❤ Count likes for a post
     int countByPost(Post post);
+
+    // ✅ Check if user already liked (useful for frontend)
+    boolean existsByUserAndPost(User user, Post post);
+
+    // ❌ Optional optimization (not used yet, but industry practice)
+    void deleteByUserAndPost(User user, Post post);
 }

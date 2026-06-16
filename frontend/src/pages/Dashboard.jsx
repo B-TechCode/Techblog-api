@@ -2,78 +2,142 @@ import { useEffect, useState } from "react";
 import API from "../api/axios";
 import Upload from "./Upload";
 import CreatePost from "./CreatePost";
+import SearchUsers from "../components/SearchUsers";
+import { getNotifications } from "../services/notificationService";
+// import SearchUsers component using existing structure only
+const Dashboard = ({
+                       goToLogin,
+                       goToProfile,
+                       goToFeed,
+                       goToNotifications
+                   }) => {
 
-const Dashboard = ({ goToLogin, goToProfile, goToFeed }) => {
-
-    const [userEmail, setUserEmail] = useState("");
+    const [user, setUser] = useState(null);
     const [profilePic, setProfilePic] = useState("");
-    const [notifications, setNotifications] = useState([]);
+    const [notificationCount, setNotificationCount] = useState(0);
 
     useEffect(() => {
+
         fetchUser();
+
+        const interval = setInterval(() => {
+            fetchNotificationsCount();
+        }, 5000);
+
+        return () => clearInterval(interval);
+
     }, []);
 
+    // ================= FETCH USER =================
+
     const fetchUser = async () => {
+
         try {
-            const token = localStorage.getItem("token");
 
-            const res = await API.get("/users/test", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await API.get("/users/me");
 
-            setUserEmail(res.data.email);
+            const userData = res.data;
 
-            // ✅ FIX: load image correctly
-            const saved = localStorage.getItem("profileImage");
+            setUser(userData);
 
-            if (saved) {
-                setProfilePic(`http://localhost:8080/uploads/${saved}?t=${Date.now()}`);
-            } else if (res.data.profileImage) {
-                const img = res.data.profileImage;
-                setProfilePic(`http://localhost:8080/uploads/${img}?t=${Date.now()}`);
-                localStorage.setItem("profileImage", img);
+            await fetchNotificationsCount();
+
+
+
+            // ✅ FIXED IMAGE URL
+
+            if (userData.profilePic) {
+
+                setProfilePic(
+                    `http://localhost:8080/uploads/${userData.profilePic}`
+                );
+
             } else {
+
                 setProfilePic("");
             }
 
         } catch (err) {
-            localStorage.clear();
+
+            console.error("User fetch failed:", err);
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
             goToLogin();
         }
     };
 
-    useEffect(() => {
-        const fetchNotif = async () => {
-            try {
-                const token = localStorage.getItem("token");
 
-                const res = await API.get("/notifications", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
 
-                setNotifications(res.data || []);
+// ================= FETCH NOTIFICATION COUNT =================
 
-            } catch (err) {
-                console.warn("Notifications not available");
-            }
-        };
+    const fetchNotificationsCount = async () => {
 
-        fetchNotif();
-    }, []);
+        try {
+
+            const notifications = await getNotifications();
+
+            setNotificationCount(notifications.length);
+
+        } catch (err) {
+
+            console.error(
+                "Failed to fetch notification count:",
+                err
+            );
+        }
+    };
+
+
+
+
+    // ================= LOGOUT =================
 
     const handleLogout = () => {
-        localStorage.clear();
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
         goToLogin();
     };
 
     return (
+
         <div style={container}>
 
-            {/* 🔥 NAVBAR */}
-            <div style={navbar}>
-                <h2 style={{ margin: 0 }}>TechBlog</h2>
+            {/* ================= NAVBAR ================= */}
 
-                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <div style={navbar}>
+
+                <h1 style={logo}>
+                    TechBlog
+                </h1>
+
+                <div style={navRight}>
+
+                    {/* FEED BUTTON */}
+
+                    <button
+                        onClick={goToFeed}
+                        style={feedBtn}
+                    >
+                        Feed
+                    </button>
+
+                    <button
+                        onClick={goToNotifications}
+                        style={notificationBtn}
+                    >
+                        🔔 Notifications ({notificationCount})
+                    </button>
+
+
+                    {/* SEARCH USERS */}
+
+                    <SearchUsers />
+
+                    {/* PROFILE IMAGE */}
 
                     <img
                         src={
@@ -83,67 +147,96 @@ const Dashboard = ({ goToLogin, goToProfile, goToFeed }) => {
                         alt="profile"
                         onClick={goToProfile}
                         style={navProfile}
-                    />
-
-                    <button onClick={handleLogout} style={logoutBtn}>
-                        Logout
-                    </button>
-                </div>
-            </div>
-
-            {/* 🔔 NOTIFICATIONS */}
-            <div style={notifBox}>
-                {notifications.map(n => (
-                    <p key={n.id}>🔔 {n.message}</p>
-                ))}
-            </div>
-
-            {/* 🔥 MAIN */}
-            <div style={main}>
-
-                {/* 🔥 WELCOME CARD */}
-                <div
-                    style={cardStyle}
-                    onMouseEnter={(e)=>{
-                        e.currentTarget.style.transform="scale(1.05)";
-                    }}
-                    onMouseLeave={(e)=>{
-                        e.currentTarget.style.transform="scale(1)";
-                    }}
-                >
-
-                    <h3 style={{ marginBottom: "8px" }}>Welcome User</h3>
-
-                    {/* ✅ ONLY ONE PROFILE IMAGE */}
-                    <img
-                        src={
-                            profilePic
-                                ? profilePic
-                                : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                        }
-                        alt="profile"
-                        style={profileImg}
                         onError={(e) => {
+
                             e.target.src =
                                 "https://cdn-icons-png.flaticon.com/512/149/149071.png";
                         }}
                     />
 
-                    {/* ✅ UPLOAD (NO IMAGE INSIDE) */}
-                    <Upload
-                        onUploadSuccess={(imgName) => {
-                            const img = `http://localhost:8080/uploads/${imgName}`;
-                            setProfilePic(img + "?t=" + Date.now());
-                            localStorage.setItem("profileImage", imgName);
-                        }}
+                    {/* LOGOUT */}
+
+                    <button
+                        onClick={handleLogout}
+                        style={logoutBtn}
+                    >
+                        Logout
+                    </button>
+
+                </div>
+
+            </div>
+
+            {/* ================= MAIN ================= */}
+
+            <div style={main}>
+
+                {/* ================= PROFILE SECTION ================= */}
+
+                <div style={profileSection}>
+
+                    <div style={profileCard}>
+
+                        {/* PROFILE IMAGE */}
+
+                        <img
+                            src={
+                                profilePic ||
+                                "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                            }
+                            alt="profile"
+                            style={profileImg}
+                            onError={(e) => {
+
+                                e.target.src =
+                                    "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                            }}
+                        />
+
+                        {/* WELCOME */}
+
+                        <h2 style={welcomeText}>
+                            Welcome {user?.name || "User"}
+                        </h2>
+
+                        {/* UPLOAD */}
+
+                        <div style={uploadWrapper}>
+
+                            <Upload
+                                onUploadSuccess={(imgName) => {
+
+                                    if (
+                                        !imgName ||
+                                        imgName === "undefined"
+                                    ) return;
+
+                                    // ✅ FIXED IMAGE URL
+
+                                    setProfilePic(
+                                        `http://localhost:8080/uploads/${imgName}`
+                                    );
+                                }}
+                            />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* ================= CREATE POST ================= */}
+
+                <div style={createPostSection}>
+
+                    <CreatePost
+                        goToFeed={goToFeed}
                     />
 
                 </div>
 
-                {/* CREATE POST */}
-                <CreatePost goToFeed={goToFeed} />
-
             </div>
+
         </div>
     );
 };
@@ -151,71 +244,233 @@ const Dashboard = ({ goToLogin, goToProfile, goToFeed }) => {
 export default Dashboard;
 
 
-/* 🎨 STYLES */
+/* ================= STYLES ================= */
 
 const container = {
+
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #667eea, #764ba2)"
-};
 
-const navbar = {
-    width: "100%",
-    background: "#020617",
-    color: "white",
-    padding: "12px 20px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center"
-};
+    background:
+        "linear-gradient(to bottom right, #020617, #020617, #0f172a)",
 
-const main = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    paddingTop: "20px",
-    gap: "20px"
-};
-
-const notifBox = {
-    padding: "10px 20px",
     color: "white"
 };
 
-const navProfile = {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-    cursor: "pointer",
-    border: "2px solid #38bdf8",
-    objectFit: "cover"
+/* ================= NAVBAR ================= */
+
+const navbar = {
+
+    width: "100%",
+
+    display: "flex",
+
+    justifyContent: "space-between",
+
+    alignItems: "center",
+
+    padding: "7px 16px",
+
+    background: "rgba(255,255,255,0.03)",
+
+    backdropFilter: "blur(12px)",
+
+    borderBottom:
+        "1px solid rgba(255,255,255,0.06)"
 };
 
-const profileImg = {
-    width: "80px",
-    height: "80px",
-    borderRadius: "50%",
-    objectFit: "cover",
-    marginBottom: "10px",
-    border: "3px solid #38bdf8"
+const logo = {
+
+    fontSize: "18px",
+
+    fontWeight: "700",
+
+    margin: 0,
+
+    background:
+        "linear-gradient(to right, #38bdf8, #2563eb)",
+
+    WebkitBackgroundClip: "text",
+
+    WebkitTextFillColor: "transparent"
 };
 
-const logoutBtn = {
-    padding: "8px 14px",
-    background: "#ef4444",
-    color: "white",
+const navRight = {
+
+    display: "flex",
+
+    alignItems: "center",
+
+    gap: "12px"
+};
+
+const feedBtn = {
+
+    padding: "7px 14px",
+
+    borderRadius: "9px",
+
     border: "none",
-    borderRadius: "6px",
+
+    background:
+        "linear-gradient(135deg, #2563eb, #38bdf8)",
+
+    color: "white",
+
+    cursor: "pointer",
+
+    fontWeight: "600",
+
+    fontSize: "12px"
+};
+
+const navProfile = {
+
+    width: "34px",
+
+    height: "34px",
+
+    borderRadius: "50%",
+
+    objectFit: "cover",
+
+    border:
+        "2px solid rgba(255,255,255,0.15)",
+
     cursor: "pointer"
 };
 
-const cardStyle = {
-    width: "260px",
-    padding: "15px",
-    borderRadius: "14px",
-    background: "rgba(255,255,255,0.2)",
-    backdropFilter: "blur(10px)",
-    textAlign: "center",
+
+const notificationBtn = {
+
+    padding: "7px 13px",
+
+    borderRadius: "9px",
+
+    border: "none",
+
+    background:
+        "linear-gradient(135deg, #3b82f6, #2563eb)",
+
     color: "white",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-    transition: "0.3s"
+
+    cursor: "pointer",
+
+    fontWeight: "600",
+
+    fontSize: "12px"
+};
+const logoutBtn = {
+
+    padding: "7px 13px",
+
+    borderRadius: "9px",
+
+    border: "none",
+
+    background:
+        "linear-gradient(135deg, #ef4444, #dc2626)",
+
+    color: "white",
+
+    cursor: "pointer",
+
+    fontWeight: "600",
+
+    fontSize: "12px"
+};
+
+/* ================= MAIN ================= */
+
+const main = {
+
+    width: "100%",
+
+    display: "flex",
+
+    flexDirection: "column",
+
+    alignItems: "center",
+
+    justifyContent: "center",
+
+    paddingTop: "28px",
+
+    gap: "24px"
+};
+
+/* ================= PROFILE SECTION ================= */
+
+const profileSection = {
+
+    width: "100%",
+
+    display: "flex",
+
+    justifyContent: "center",
+
+    alignItems: "center"
+};
+
+const profileCard = {
+
+    width: "285px",
+
+    padding: "8px",
+
+    borderRadius: "18px",
+
+    background: "rgba(255,255,255,0.07)",
+
+    backdropFilter: "blur(14px)",
+
+    border:
+        "1px solid rgba(255,255,255,0.08)",
+
+    textAlign: "center",
+
+    boxShadow:
+        "0 8px 40px rgba(0,0,0,0.35)"
+};
+
+const profileImg = {
+
+    width: "82px",
+
+    height: "82px",
+
+    borderRadius: "50%",
+
+    objectFit: "cover",
+
+    border:
+        "4px solid rgba(255,255,255,0.12)",
+
+    marginBottom: "8px"
+};
+
+const welcomeText = {
+
+    fontSize: "17px",
+
+    fontWeight: "700",
+
+    marginBottom: "8px"
+};
+
+const uploadWrapper = {
+
+    marginTop: "8px"
+};
+
+/* ================= CREATE POST ================= */
+
+const createPostSection = {
+
+    width: "100%",
+
+    display: "flex",
+
+    justifyContent: "center",
+
+    alignItems: "center"
 };

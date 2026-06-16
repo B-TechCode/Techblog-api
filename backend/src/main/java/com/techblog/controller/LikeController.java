@@ -5,6 +5,7 @@ import com.techblog.repository.UserRepository;
 import com.techblog.service.LikeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,22 +19,73 @@ public class LikeController {
     @Autowired
     private UserRepository userRepository;
 
-    //  TOGGLE LIKE
+    // ================= TOGGLE LIKE =================
+
     @PostMapping("/{postId}")
-    public String toggleLike(@PathVariable Integer postId,
-                             Authentication authentication) {
+    public ResponseEntity<String> toggleLike(
+            @PathVariable Integer postId,
+            Authentication authentication
+    ) {
+
+        User user = getLoggedInUser(authentication);
+
+        String result =
+                likeService.toggleLike(postId, user);
+
+        return ResponseEntity.ok(result);
+    }
+
+    // ================= GET LIKE COUNT =================
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<Integer> getLikes(
+            @PathVariable Integer postId
+    ) {
+
+        int count =
+                likeService.getLikesCount(postId);
+
+        return ResponseEntity.ok(count);
+    }
+
+    // ================= CHECK IF LIKED =================
+
+    @GetMapping("/check/{postId}")
+    public ResponseEntity<Boolean> isLiked(
+            @PathVariable Integer postId,
+            Authentication authentication
+    ) {
+
+        User user = getLoggedInUser(authentication);
+
+        boolean liked =
+                likeService.isPostLikedByUser(
+                        postId,
+                        user
+                );
+
+        return ResponseEntity.ok(liked);
+    }
+
+    // ================= COMMON METHOD =================
+
+    private User getLoggedInUser(
+            Authentication authentication
+    ) {
+
+        if (authentication == null) {
+
+            throw new RuntimeException(
+                    "Unauthorized"
+            );
+        }
 
         String email = authentication.getName();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return likeService.toggleLike(postId, user);
-    }
-
-    // ❤ GET LIKE COUNT
-    @GetMapping("/{postId}")
-    public int getLikes(@PathVariable Integer postId) {
-        return likeService.getLikesCount(postId);
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "User not found"
+                        ));
     }
 }

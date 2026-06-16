@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -12,7 +14,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
+@Component  // ✅ IMPORTANT (now Spring-managed)
 public class JwtFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil; // ✅ Inject instead of static
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -22,17 +28,17 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        // ✅ Check header exists & valid format
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
             String token = authHeader.substring(7);
 
             try {
-                // 🔥 Extract email from token
-                String email = JwtUtil.extractEmail(token);
+                String email = jwtUtil.extractEmail(token);
 
-                // 🔥 Validate token (VERY IMPORTANT)
-                if (email != null && JwtUtil.validateToken(token)) {
+                // ✅ Check not already authenticated
+                if (email != null &&
+                        jwtUtil.validateToken(token) &&
+                        SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
@@ -41,20 +47,15 @@ public class JwtFilter extends OncePerRequestFilter {
                                     Collections.emptyList()
                             );
 
-                    // 🔥 Set authentication in context
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
 
             } catch (Exception e) {
-                // ❌ Invalid token → send proper response
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"Invalid or expired token\"}");
-                return;
+                // ❌ Log error only (don’t break chain)
+                System.out.println("JWT ERROR: " + e.getMessage());
             }
         }
 
-        // 🔥 Continue filter chain
         filterChain.doFilter(request, response);
     }
 }

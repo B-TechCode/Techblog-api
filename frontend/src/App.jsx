@@ -5,25 +5,29 @@ import VerifyOTP from "./pages/VerifyOTP";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
-import Posts from "./pages/Posts";   // ✅ Feed Page
+import Posts from "./pages/Posts";
+import Notifications from "./pages/Notifications";
 
 function App() {
 
     const [page, setPage] = useState("register");
 
-    // ✅ AUTO LOGIN
+    // ================= AUTO LOGIN =================
+
     useEffect(() => {
+
         const token = localStorage.getItem("token");
 
         if (token) {
             setPage("dashboard");
         }
+
     }, []);
 
-    // ================= ROUTING =================
+    // ================= REGISTER =================
 
-    // REGISTER
     if (page === "register") {
+
         return (
             <Register
                 goToVerify={() => setPage("verify")}
@@ -32,51 +36,73 @@ function App() {
         );
     }
 
-    // VERIFY
+    // ================= VERIFY =================
+
     if (page === "verify") {
+
         return (
-            <VerifyOTP goToLogin={() => setPage("login")} />
+            <VerifyOTP
+                goToLogin={() => setPage("login")}
+            />
         );
     }
 
-    // LOGIN
+    // ================= LOGIN =================
+
     if (page === "login") {
+
         return (
             <Login
-                goToHome={() => setPage("dashboard")}
+                goToDashboard={() => setPage("dashboard")}
                 goToRegister={() => setPage("register")}
             />
         );
     }
 
-    // DASHBOARD (CREATE POST PAGE)
+    // ================= DASHBOARD =================
+
     if (page === "dashboard") {
+
         return (
             <Dashboard
                 goToLogin={() => setPage("login")}
                 goToProfile={() => setPage("profile")}
-                goToFeed={() => setPage("feed")}   // ✅ redirect after post
+                goToFeed={() => setPage("feed")}
+                goToNotifications={() => setPage("notifications")}
             />
         );
     }
 
-    // ✅ FEED PAGE (ALL POSTS PAGE)
+    // ================= FEED =================
+
     if (page === "feed") {
+
         return (
             <Posts
-                goToDashboard={() => setPage("dashboard")}   // 🔙 back
-                goToProfile={() => setPage("profile")}       // optional
+                goToDashboard={() => setPage("dashboard")}
+                goToProfile={() => setPage("profile")}
             />
         );
     }
 
-    // PROFILE
+    // ================= PROFILE =================
+
     if (page === "profile") {
+
         return (
             <Profile
                 goToDashboard={() => setPage("dashboard")}
-                goToFeed={() => setPage("feed")}   // optional navigation
+                goToFeed={() => setPage("feed")}
             />
+        );
+    }
+
+    // ================= NOTIFICATIONS =================
+
+    if (page === "notifications") {
+
+        return (
+            <Notifications />
         );
     }
 

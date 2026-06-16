@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public class NotificationService {
 
@@ -17,12 +18,12 @@ public class NotificationService {
 
     public void send(User user, String message) {
         Notification n = new Notification();
-        n.setUser(user);
+        n.setReceiver(user);
         n.setMessage(message);
         repo.save(n);
     }
 
     public List<Notification> get(User user) {
-        return repo.findByUserOrderByCreatedAtDesc(user);
+        return repo.findByReceiverOrderByCreatedAtDesc(user);
     }
 }

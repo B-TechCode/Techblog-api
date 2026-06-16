@@ -8,7 +8,9 @@ import com.techblog.repository.PostRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.techblog.service.NotificationService;
 @Service
 public class LikeService {
 
@@ -18,30 +20,63 @@ public class LikeService {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    private static final String LIKED = "Liked";
+    private static final String UNLIKED = "Unliked";
+
+    // 🔁 TOGGLE LIKE
+    @Transactional
     public String toggleLike(Integer postId, User user) {
 
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = getPostById(postId);
 
-        // 🔍 Check if already liked
         return likeRepository.findByUserAndPost(user, post)
                 .map(existingLike -> {
                     likeRepository.delete(existingLike);
-                    return "Unliked";
+                    return UNLIKED;
                 })
                 .orElseGet(() -> {
-                    Like like = new Like();
-                    like.setUser(user);
-                    like.setPost(post);
+
+                    Like like = Like.builder()
+                            .user(user)
+                            .post(post)
+                            .build();
+
                     likeRepository.save(like);
-                    return "Liked";
+
+                    // ================= NOTIFICATION =================
+
+                    if (!post.getUser().getId().equals(user.getId())) {
+
+                        notificationService.send(
+                                post.getUser(),
+                                user.getName() + " liked your post"
+                        );
+                    }
+
+                    return LIKED;
                 });
     }
 
+    // ❤ GET LIKE COUNT
     public int getLikesCount(Integer postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
+        Post post = getPostById(postId);
         return likeRepository.countByPost(post);
+    }
+
+    // ✅ NEW: CHECK IF USER LIKED POST
+    public boolean isPostLikedByUser(Integer postId, User user) {
+
+        Post post = getPostById(postId);
+
+        return likeRepository.existsByUserAndPost(user, post);
+    }
+
+    // 🔒 COMMON METHOD (Reusable)
+    private Post getPostById(Integer postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 }

@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,41 +30,49 @@ public class PostController {
     @Autowired
     private UserRepository userRepository;
 
-    // 🔥 IMAGE PATH
-    private final String UPLOAD_DIR = "D:/Techblog/techblog/uploads/";
+    // ✅ SAME AS application.properties
+    private final String UPLOAD_DIR =
+            "D:/Techblog/techblog/uploads/";
 
-    // ✅ GET ALL POSTS
+    // ================= GET ALL POSTS =================
+
     @GetMapping
     public List<Post> getAllPosts() {
         return postService.getAllPosts();
     }
 
-    // ✅ PAGINATION
+    // ================= PAGINATION =================
+
     @GetMapping("/all")
     public Page<Post> getPosts(Pageable pageable) {
         return postService.getPosts(pageable);
     }
 
-    // ✅ GET POST BY ID
+    // ================= GET POST BY ID =================
+
     @GetMapping("/{id}")
     public Post getPostById(@PathVariable Integer id) {
         return postService.getPostById(id);
     }
 
-    // 🔥🔥🔥 FINAL FIXED CREATE POST (JSON BASED)
+    // ================= CREATE POST =================
+
     @PostMapping
-    public Post createPost(@RequestBody Post post,
-                           Authentication authentication) {
+    public Post createPost(
+            @RequestBody Post post,
+            Authentication authentication
+    ) {
 
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
-        // ✅ IMPORTANT
+        // ✅ SET OWNER
         post.setUser(user);
 
-        // ✅ prevent null image issue
+        // ✅ FIX NULL IMAGE
         if (post.getImage() == null) {
             post.setImage("");
         }
@@ -69,55 +80,89 @@ public class PostController {
         return postService.createPost(post);
     }
 
-    // 🔥 UPDATE POST (JSON BASED)
+    // ================= UPDATE POST =================
+
+    // ================= UPDATE POST =================
+
     @PutMapping("/{id}")
-    public Post updatePost(@PathVariable Integer id,
-                           @RequestBody Post updatedPost,
-                           Authentication authentication) {
+    public Post updatePost(
+
+            @PathVariable Integer id,
+
+            @RequestBody Post updatedPost,
+
+            Authentication authentication
+
+    ) {
 
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
-        Post existingPost = postService.getPostById(id);
+        Post existingPost =
+                postService.getPostById(id);
 
-        // ✅ SECURITY CHECK
-        if (!existingPost.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to update this post");
+        // ✅ OWNER CHECK
+        if (!existingPost.getUser().getId()
+                .equals(user.getId())) {
+
+            throw new RuntimeException(
+                    "You are not allowed to update this post"
+            );
         }
 
-        existingPost.setTitle(updatedPost.getTitle());
-        existingPost.setContent(updatedPost.getContent());
+        // ✅ UPDATE TITLE
+        existingPost.setTitle(
+                updatedPost.getTitle()
+        );
 
-        // ✅ OPTIONAL IMAGE UPDATE
-        if (updatedPost.getImage() != null) {
-            existingPost.setImage(updatedPost.getImage());
-        }
+        // ✅ UPDATE CONTENT
+        existingPost.setContent(
+                updatedPost.getContent()
+        );
+
+        // ✅ KEEP OLD IMAGE
+        existingPost.setImage(
+                existingPost.getImage()
+        );
 
         return postService.createPost(existingPost);
     }
+    // ================= DELETE POST =================
 
-    // 🔥 DELETE POST
     @DeleteMapping("/{id}")
-    public String deletePost(@PathVariable Integer id,
-                             Authentication authentication) throws Exception {
+    public String deletePost(
+            @PathVariable Integer id,
+            Authentication authentication
+    ) throws Exception {
 
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
         Post post = postService.getPostById(id);
 
+        // ✅ OWNER OR ADMIN
         if (!post.getUser().getId().equals(user.getId())
                 && !email.equals("admin@gmail.com")) {
-            throw new RuntimeException("You are not allowed to delete this post");
+
+            throw new RuntimeException(
+                    "You are not allowed to delete this post"
+            );
         }
 
         // ✅ DELETE IMAGE FILE
-        if (post.getImage() != null && !post.getImage().isEmpty()) {
-            Path path = Paths.get(UPLOAD_DIR + post.getImage());
+        if (post.getImage() != null
+                && !post.getImage().isEmpty()) {
+
+            Path path = Paths.get(
+                    UPLOAD_DIR + post.getImage()
+            );
+
             Files.deleteIfExists(path);
         }
 
@@ -126,10 +171,17 @@ public class PostController {
         return "Post deleted successfully!";
     }
 
-    // ✅ MY POSTS
+    // ================= MY POSTS =================
+
     @GetMapping("/my")
-    public List<Post> getMyPosts(Authentication authentication) {
+    public List<Post> getMyPosts(
+            Authentication authentication
+    ) {
+
         String email = authentication.getName();
+
         return postService.getPostsByUser(email);
     }
 }
+
+

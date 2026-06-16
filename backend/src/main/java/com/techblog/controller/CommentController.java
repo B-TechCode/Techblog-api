@@ -9,10 +9,12 @@ import com.techblog.repository.UserRepository;
 import com.techblog.service.CommentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -27,61 +29,173 @@ public class CommentController {
     @Autowired
     private PostRepository postRepository;
 
-    // ✅ ADD COMMENT (FINAL FIX - CLEAN API)
+    // ================= ADD COMMENT =================
+
     @PostMapping
-    public CommentResponse addComment(@RequestBody Comment request,
-                                      Authentication authentication) {
+    public ResponseEntity<?> addComment(
+            @RequestBody Map<String, Object> request,
+            Authentication authentication
+    ) {
 
-        String email = authentication.getName();
+        try {
 
-        // ✅ VALIDATION
-        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
-            throw new RuntimeException("Comment cannot be empty");
+            String email = authentication.getName();
+
+            // ✅ GET CONTENT
+            String content =
+                    (String) request.get("content");
+
+            // ✅ GET POST ID
+            Integer postId =
+                    (Integer) request.get("postId");
+
+            // ✅ EMPTY CHECK
+            if (content == null
+                    || content.trim().isEmpty()) {
+
+                throw new RuntimeException(
+                        "Comment cannot be empty"
+                );
+            }
+
+            // ✅ POST ID CHECK
+            if (postId == null) {
+
+                throw new RuntimeException(
+                        "Post ID is required"
+                );
+            }
+
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "User not found"
+                            ));
+
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Post not found"
+                            ));
+
+            // ✅ CREATE COMMENT
+            Comment comment = new Comment();
+
+            comment.setContent(content.trim());
+
+            comment.setUser(user);
+
+            comment.setPost(post);
+
+            CommentResponse response =
+                    commentService.addComment(comment);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         }
-
-        if (request.getPost() == null || request.getPost().getId() == null) {
-            throw new RuntimeException("Post ID is required");
-        }
-
-        // ✅ GET USER
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // ✅ GET POST
-        Post post = postRepository.findById(request.getPost().getId())
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        // ✅ CREATE COMMENT
-        Comment comment = new Comment();
-        comment.setContent(request.getContent().trim());
-        comment.setUser(user);
-        comment.setPost(post);
-
-        return commentService.addComment(comment);
     }
 
-    // ✅ GET COMMENTS BY POST
+    // ================= GET COMMENTS =================
+
     @GetMapping("/{postId}")
-    public List<CommentResponse> getComments(@PathVariable Integer postId) {
-        return commentService.getCommentsByPost(postId);
+    public ResponseEntity<?> getComments(
+            @PathVariable Integer postId
+    ) {
+
+        try {
+
+            List<CommentResponse> comments =
+                    commentService.getCommentsByPost(postId);
+
+            return ResponseEntity.ok(comments);
+
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
+        }
     }
 
-    // ✅ DELETE COMMENT (OWNER + ADMIN)
+    // ================= DELETE COMMENT =================
+
     @DeleteMapping("/{id}")
-    public String deleteComment(@PathVariable Integer id,
-                                Authentication authentication) {
+    public ResponseEntity<?> deleteComment(
+            @PathVariable Integer id,
+            Authentication authentication
+    ) {
 
-        String email = authentication.getName();
+        try {
 
-        Comment comment = commentService.getCommentById(id);
+            String email = authentication.getName();
 
-        if (!comment.getUser().getEmail().equals(email)
-                && !email.equals("admin@gmail.com")) {
-            throw new RuntimeException("You are not allowed to delete this comment");
+            Comment comment =
+                    commentService.getCommentById(id);
+
+            // ✅ OWNER OR ADMIN
+            if (!comment.getUser().getEmail().equals(email)
+                    && !email.equals("admin@gmail.com")) {
+
+                throw new RuntimeException(
+                        "You are not allowed to delete this comment"
+                );
+            }
+
+            commentService.deleteComment(id);
+
+            return ResponseEntity.ok(
+                    "Comment deleted successfully!"
+            );
+
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         }
+    }
 
-        commentService.deleteComment(id);
+    // ================= UPDATE COMMENT =================
 
-        return "Comment deleted successfully!";
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateComment(
+            @PathVariable Integer id,
+            @RequestBody Map<String, String> request,
+            Authentication authentication
+    ) {
+
+        try {
+
+            String email = authentication.getName();
+
+            Comment comment =
+                    commentService.getCommentById(id);
+
+            // ✅ OWNER CHECK
+            if (!comment.getUser().getEmail().equals(email)) {
+
+                throw new RuntimeException(
+                        "You are not allowed to edit this comment"
+                );
+            }
+
+            String content =
+                    request.get("content");
+
+            CommentResponse updated =
+                    commentService.updateComment(
+                            id,
+                            content
+                    );
+
+            return ResponseEntity.ok(updated);
+
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
+        }
     }
 }

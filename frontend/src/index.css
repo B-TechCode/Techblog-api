@@ -1,12 +1,5 @@
-/* 🔥 CHROME AUTOFILL FIX */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,0.9) inset !important;
-    box-shadow: 0 0 0px 1000px rgba(255,255,255,0.9) inset !important;
-    -webkit-text-fill-color: black !important;
-}
+/* ================= GOOGLE FONT ================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 /* ================= RESET ================= */
 * {
@@ -18,298 +11,274 @@ textarea:-webkit-autofill {
 
 /* ================= BODY ================= */
 body {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(to bottom right, #020617, #0f172a, #111827);
     min-height: 100vh;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* ================= SCROLLBAR ================= */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* ================= CHROME AUTOFILL FIX ================= */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    -webkit-text-fill-color: black !important;
 }
 
 /* ================= APP CONTAINER ================= */
 .app-container {
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding-top: 70px;
-    min-height: 100vh;
+    align-items: center;
+    padding: 30px 15px;
 }
 
 /* ================= GLASS CARD ================= */
 .card {
-    width: 380px;
-    padding: 28px;
-    border-radius: 14px;
-
-    background: rgba(255,255,255,0.18); /* 🔥 less blur */
-    backdrop-filter: blur(6px);
-
-    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    width: 100%;
+    max-width: 420px;
+    padding: 35px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.45);
     text-align: center;
     color: white;
-    transition: 0.3s;
+    animation: fadeUp 0.5s ease;
+    transition: 0.3s ease;
 }
 
-.card-hover:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+/* ================= CARD HOVER ================= */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+}
+
+/* ================= TITLE ================= */
+.title,
+.card h2 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 22px;
+    color: white;
 }
 
 /* ================= INPUT ================= */
 .input {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.4);
-
-    background: rgba(255,255,255,0.9);   /* clean white */
-    color: #000;                         /* BLACK TEXT */
-
+    padding: 14px;
+    margin: 12px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.12);
+    color: white;
     font-size: 15px;
     outline: none;
-    transition: 0.2s;
+    transition: 0.3s;
 }
 
-/* 🔥 FOCUS */
-.input:focus {
-    border: 1px solid #00c6ff;
-    background: white;
-}
-
-/*!* 🔥 PLACEHOLDER *!*/
-/*.input::placeholder {*/
-/*    color: #555;*/
-/*}*/
-
-
-
-/* 🔥 PLACEHOLDER FIX (VERY IMPORTANT) */
+/* ================= INPUT PLACEHOLDER ================= */
 .input::placeholder,
 textarea::placeholder {
-    color: #555;        /* dark gray → visible */
-    opacity: 1;         /* full visibility */
+    color: rgba(255,255,255,0.7);
 }
 
-/* 🔥 TEXTAREA FIX */
-textarea.input {
-    color: #000;
+/* ================= INPUT HOVER ================= */
+.input:hover {
+    border: 1px solid #38bdf8;
 }
 
-/* 🔥 FOCUS EFFECT */
+/* ================= INPUT FOCUS ================= */
 .input:focus {
-    border: 1px solid #00c6ff;
-    box-shadow: 0 0 6px rgba(0,198,255,0.5);
+    border: 1px solid #38bdf8;
+    box-shadow: 0 0 12px rgba(56,189,248,0.4);
+    background: rgba(255,255,255,0.16);
 }
 
-/* 🔥 SELECT FIX */
+/* ================= SELECT ================= */
 select.input {
-    color: #000;
-    background: rgba(255,255,255,0.9);
+    color: white;
+    appearance: none;
 }
 
+/* ================= OPTION ================= */
+option {
+    color: black;
+}
+
+/* ================= PASSWORD BOX ================= */
+.password-box {
+    position: relative;
+    width: 100%;
+}
+
+/* ================= PASSWORD INPUT ================= */
+.password-input {
+    padding-right: 45px;
+}
+
+/* ================= EYE ICON ================= */
+.eye-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: rgba(255,255,255,0.8);
+    transition: 0.3s;
+}
+
+.eye-icon:hover {
+    color: #38bdf8;
+}
 
 /* ================= BUTTON ================= */
 .btn {
     width: 100%;
-    padding: 12px;
-    margin-top: 12px;
-
-    border-radius: 8px;
+    padding: 14px;
+    margin-top: 18px;
     border: none;
-
-    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
     color: white;
-    font-weight: bold;
-
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.3s ease;
 }
 
+/* ================= BUTTON HOVER ================= */
 .btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 20px rgba(0, 114, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37,99,235,0.4);
+}
+
+/* ================= BUTTON DISABLED ================= */
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 /* ================= LINK ================= */
 .link {
-    color: #00c6ff;
+    color: #38bdf8;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    transition: 0.3s;
 }
 
 .link:hover {
     text-decoration: underline;
+    color: #7dd3fc;
+}
+
+/* ================= TEXT ================= */
+.bottom-text {
+    margin-top: 18px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
 }
 
 /* ================= NAVBAR ================= */
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-
+    padding: 18px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    padding: 15px 30px;
-
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-
-    color: white;
-    z-index: 1000;
-}
-
-/* ================= LOGOUT ================= */
-.logout-btn {
-    background: #ff4d4f;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.logout-btn:hover {
-    background: #e60023;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 /* ================= PROFILE IMAGE ================= */
 .profile-img {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    margin: 10px 0;
-    border: 2px solid white;
+    border: 3px solid rgba(255,255,255,0.2);
 }
 
-/* ================= POSTS ================= */
-.posts-container {
-    width: 600px;
-    margin: 20px auto;
+/* ================= SUCCESS MESSAGE ================= */
+.success-message {
+    background: rgba(34,197,94,0.2);
+    border: 1px solid #22c55e;
+    color: #22c55e;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
 }
 
-/* ================= POST CARD ================= */
-.post-card {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-    color: white;
-
-    padding: 18px;
-    border-radius: 14px;
-
-    margin-bottom: 20px;
-
-    border: 1px solid rgba(255,255,255,0.2);
-
-    transition: 0.3s;
+/* ================= ERROR MESSAGE ================= */
+.error-message {
+    color: #f87171;
+    font-size: 12px;
+    margin-top: -5px;
+    margin-bottom: 8px;
+    text-align: left;
 }
 
-.post-card:hover {
-    transform: scale(1.02);
+/* ================= ANIMATION ================= */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* ================= LIKE BUTTON ================= */
-.like-btn {
-    margin-top: 10px;
-    padding: 8px 14px;
-
-    border: none;
-    border-radius: 20px;
-
-    background: linear-gradient(45deg, #ff416c, #ff4b2b);
-    color: white;
-
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.like-btn:hover {
-    transform: scale(1.1);
-}
-
-
-/* ================= CREATE POST FIX ================= */
-
-/* 🔥 Force white text for dark glass inputs */
-input,
-textarea {
-    color: #ffffff;
-}
-
-/* 🔥 FIX PLACEHOLDER (VERY IMPORTANT) */
-input::placeholder,
-textarea::placeholder {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-/* 🔥 Optional: better contrast */
-textarea {
-    color: #ffffff;
-}
-
-
-/* ================= ADD ONLY THIS ================= */
-
-/* 🔥 Spinner Animation */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* 🔥 Mobile Responsive (NO DESIGN CHANGE) */
+/* ================= MOBILE RESPONSIVE ================= */
 @media (max-width: 768px) {
 
-    /* Keep card same style but scale safely */
     .card {
-        transform: scale(0.95);
+        padding: 25px;
+        border-radius: 20px;
     }
 
-    /* Prevent overflow */
-    body {
-        overflow-x: hidden;
+    .title,
+    .card h2 {
+        font-size: 25px;
     }
 
-    /* Ensure inputs don’t overflow */
     .input {
-        width: 100%;
+        padding: 12px;
     }
 
-    /* Safe container padding (no UI change) */
-    .app-container {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-}/* ================= ADD ONLY THIS ================= */
-
-/* 🔥 Spinner Animation */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* 🔥 Mobile Responsive (NO DESIGN CHANGE) */
-@media (max-width: 768px) {
-
-    /* Keep card same style but scale safely */
-    .card {
-        transform: scale(0.95);
+    .btn {
+        padding: 12px;
     }
 
-    /* Prevent overflow */
-    body {
-        overflow-x: hidden;
-    }
-
-    /* Ensure inputs don’t overflow */
-    .input {
-        width: 100%;
-    }
-
-    /* Safe container padding (no UI change) */
-    .app-container {
-        padding-left: 10px;
-        padding-right: 10px;
+    .navbar {
+        padding: 15px;
     }
 }

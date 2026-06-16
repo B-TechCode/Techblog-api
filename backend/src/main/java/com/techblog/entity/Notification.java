@@ -21,7 +21,7 @@ public class Notification {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    private User user;
+    private User receiver;
 
     @PrePersist
     public void time() {
