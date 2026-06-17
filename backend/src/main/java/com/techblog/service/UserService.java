@@ -138,6 +138,27 @@ public class UserService {
         throw new RuntimeException("Invalid Email or Password");
     }
 
+
+    public String sendResetOtp(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        String otp = generateOtp();
+
+        user.setResetOtp(otp);
+        user.setResetOtpExpiry(
+                LocalDateTime.now().plusMinutes(5)
+        );
+
+        userRepository.save(user);
+
+        emailService.sendOtp(email, otp);
+
+        return "Reset OTP sent successfully";
+    }
+
     // ================= UPDATE PROFILE =================
 
     public User updateProfile(
