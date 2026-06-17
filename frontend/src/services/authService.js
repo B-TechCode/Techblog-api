@@ -33,6 +33,33 @@ export const loginUser = async (data) => {
         data
     );
 
+
+    // ================= FORGOT PASSWORD =================
+
+    export const forgotPassword = async (email) => {
+
+        const response = await API.post(
+            "/users/forgot-password",
+            { email }
+        );
+
+        return response.data;
+    };
+
+// ================= RESET PASSWORD =================
+
+    export const resetPassword = async (data) => {
+
+        const response = await API.post(
+            "/users/reset-password",
+            data
+        );
+
+        return response.data;
+    };
+
+
+
     // ================= SAVE TOKEN =================
 
     localStorage.setItem(
