@@ -159,6 +159,42 @@ public class UserService {
         return "Reset OTP sent successfully";
     }
 
+
+    public String resetPassword(
+            String email,
+            String otp,
+            String newPassword
+    ) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        if (user.getResetOtp() == null) {
+            throw new RuntimeException("OTP not generated");
+        }
+
+        if (user.getResetOtpExpiry() != null &&
+                user.getResetOtpExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP expired");
+        }
+
+        if (!user.getResetOtp().equals(otp)) {
+            throw new RuntimeException("Invalid OTP");
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(newPassword)
+        );
+
+        user.setResetOtp(null);
+        user.setResetOtpExpiry(null);
+
+        userRepository.save(user);
+
+        return "Password reset successful";
+    }
+
     // ================= UPDATE PROFILE =================
 
     public User updateProfile(
