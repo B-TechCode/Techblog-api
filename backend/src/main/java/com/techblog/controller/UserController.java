@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.techblog.dto.ForgotPasswordRequest;
+
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +79,19 @@ public class UserController {
                 jwtUtil.generateToken(user.getEmail());
 
         return new LoginResponse(token, user);
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(
+            @RequestBody ForgotPasswordRequest request
+    ) {
+
+        return ResponseEntity.ok(
+                userService.sendResetOtp(
+                        request.getEmail()
+                )
+        );
     }
 
     // ================= PROFILE IMAGE UPLOAD =================
