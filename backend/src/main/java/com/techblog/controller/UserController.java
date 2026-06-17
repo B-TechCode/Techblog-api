@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.techblog.dto.ForgotPasswordRequest;
+import com.techblog.dto.ResetPasswordRequest;
+
 
 import java.util.List;
 import java.util.Map;
@@ -93,6 +95,23 @@ public class UserController {
                 )
         );
     }
+
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestBody ResetPasswordRequest request
+    ) {
+
+        return ResponseEntity.ok(
+                userService.resetPassword(
+                        request.getEmail(),
+                        request.getOtp(),
+                        request.getNewPassword()
+                )
+        );
+    }
+
+
 
     // ================= PROFILE IMAGE UPLOAD =================
 
