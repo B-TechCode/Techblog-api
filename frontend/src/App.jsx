@@ -7,10 +7,12 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Posts from "./pages/Posts";
 import Notifications from "./pages/Notifications";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
 
-    const [page, setPage] = useState("register");
+    const [page, setPage] = useState("login");
 
     // ================= AUTO LOGIN =================
 
@@ -36,7 +38,7 @@ function App() {
         );
     }
 
-    // ================= VERIFY =================
+    // ================= VERIFY OTP =================
 
     if (page === "verify") {
 
@@ -55,6 +57,35 @@ function App() {
             <Login
                 goToDashboard={() => setPage("dashboard")}
                 goToRegister={() => setPage("register")}
+                goToForgotPassword={() =>
+                    setPage("forgot-password")
+                }
+            />
+        );
+    }
+
+    // ================= FORGOT PASSWORD =================
+
+    if (page === "forgot-password") {
+
+        return (
+            <ForgotPassword
+                goToResetPassword={() =>
+                    setPage("reset-password")
+                }
+            />
+        );
+    }
+
+    // ================= RESET PASSWORD =================
+
+    if (page === "reset-password") {
+
+        return (
+            <ResetPassword
+                goToLogin={() =>
+                    setPage("login")
+                }
             />
         );
     }
@@ -68,7 +99,9 @@ function App() {
                 goToLogin={() => setPage("login")}
                 goToProfile={() => setPage("profile")}
                 goToFeed={() => setPage("feed")}
-                goToNotifications={() => setPage("notifications")}
+                goToNotifications={() =>
+                    setPage("notifications")
+                }
             />
         );
     }
@@ -79,8 +112,12 @@ function App() {
 
         return (
             <Posts
-                goToDashboard={() => setPage("dashboard")}
-                goToProfile={() => setPage("profile")}
+                goToDashboard={() =>
+                    setPage("dashboard")
+                }
+                goToProfile={() =>
+                    setPage("profile")
+                }
             />
         );
     }
@@ -91,8 +128,12 @@ function App() {
 
         return (
             <Profile
-                goToDashboard={() => setPage("dashboard")}
-                goToFeed={() => setPage("feed")}
+                goToDashboard={() =>
+                    setPage("dashboard")
+                }
+                goToFeed={() =>
+                    setPage("feed")
+                }
             />
         );
     }

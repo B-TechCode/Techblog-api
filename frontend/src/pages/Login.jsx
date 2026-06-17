@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { loginUser } from "../services/authService";
 
-const Login = ({ goToRegister, goToDashboard }) => {
-
+const Login = ({
+                   goToRegister, goToDashboard, goToForgotPassword }) => {
     const [form, setForm] = useState({
         email: "",
         password: ""
@@ -153,6 +153,18 @@ const Login = ({ goToRegister, goToDashboard }) => {
                         </span>
 
                     </p>
+
+                    <p style={{ marginTop: "10px" }}>
+
+                  <span
+                  className="link"
+                   onClick={goToForgotPassword}
+                >
+                  Forgot Password?
+                  </span>
+
+                    </p>
+
 
                 </div>
 
