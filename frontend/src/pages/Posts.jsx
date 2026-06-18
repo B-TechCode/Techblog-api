@@ -261,6 +261,31 @@ const Posts = ({ goToDashboard }) => {
         }
     };
 
+
+    const handleDeleteComment = async (
+        commentId,
+        postId
+    ) => {
+
+        try {
+
+            await API.delete(
+                `/comments/${commentId}`
+            );
+
+            fetchComments(postId);
+
+        } catch (err) {
+
+            console.error(err);
+
+            alert("Delete comment failed");
+        }
+    };
+
+
+
+
     return (
 
         <div style={container}>
@@ -417,7 +442,6 @@ const Posts = ({ goToDashboard }) => {
                                 />
                             )}
 
-                        {/* ================= ACTIONS ================= */}
 
                         {/* ================= ACTIONS ================= */}
 
@@ -463,6 +487,7 @@ const Posts = ({ goToDashboard }) => {
 
                         </div>
 
+
                         {/* ================= COMMENTS ================= */}
 
                         <div style={commentSection}>
@@ -473,7 +498,42 @@ const Posts = ({ goToDashboard }) => {
                                     key={c.id}
                                     style={comment}
                                 >
-                                    <b>{c.userName}</b> : {c.content}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center"
+                                        }}
+                                    >
+
+                <span>
+                    <b>{c.userName}</b> : {c.content}
+                </span>
+
+                                        {(user?.email === c.userEmail ||
+                                            user?.email === "admin@gmail.com") && (
+
+                                            <button
+                                                onClick={() =>
+                                                    handleDeleteComment(
+                                                        c.id,
+                                                        post.id
+                                                    )
+                                                }
+                                                style={{
+                                                    background: "transparent",
+                                                    border: "none",
+                                                    cursor: "pointer",
+                                                    color: "#ff6b6b",
+                                                    fontSize: "14px"
+                                                }}
+                                            >
+                                                ❌
+                                            </button>
+
+                                        )}
+
+                                    </div>
                                 </div>
 
                             ))}
