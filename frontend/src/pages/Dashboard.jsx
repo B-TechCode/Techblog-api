@@ -5,6 +5,10 @@ import CreatePost from "./CreatePost";
 import SearchUsers from "../components/SearchUsers";
 import { getNotifications } from "../services/notificationService";
 // import SearchUsers component using existing structure only
+import {
+    connectNotifications,
+    disconnectNotifications
+} from "../services/websocketService";
 const Dashboard = ({
                        goToLogin,
                        goToProfile,
@@ -24,11 +28,14 @@ const Dashboard = ({
             fetchNotificationsCount();
         }, 5000);
 
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+        };
 
     }, []);
 
-    // ================= FETCH USER =================
+
+// ================= FETCH USER =================
 
     const fetchUser = async () => {
 
@@ -38,13 +45,30 @@ const Dashboard = ({
 
             const userData = res.data;
 
+            console.log("Current User:", userData);
+
             setUser(userData);
 
+            // CONNECT WEBSOCKET ONLY ONCE
+
+            connectNotifications(
+                userData.id,
+                (message) => {
+
+                    console.log(
+                        "Notification received:",
+                        message
+                    );
+
+                    setNotificationCount(
+                        (prev) => prev + 1
+                    );
+
+                    alert(message);
+                }
+            );
+
             await fetchNotificationsCount();
-
-
-
-            // ✅ FIXED IMAGE URL
 
             if (userData.profilePic) {
 
