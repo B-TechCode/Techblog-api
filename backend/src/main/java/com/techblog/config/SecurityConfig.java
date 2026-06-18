@@ -47,10 +47,12 @@ public class SecurityConfig {
                                 "/api/users/register",
                                 "/api/users/verify",
 
-                                // ✅ PROFILE IMAGE ACCESS
+                                // Forgot Password
+                                "/api/users/forgot-password",
+                                "/api/users/reset-password",
+
                                 "/uploads/**",
 
-                                // ✅ FILE ACCESS
                                 "/api/files/**"
 
                         ).permitAll()
