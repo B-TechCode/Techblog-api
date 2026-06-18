@@ -225,10 +225,40 @@ const Posts = ({ goToDashboard }) => {
 
         setEditingPost(post.id);
 
+
+
+
         setEditForm({
             title: post.title,
             content: post.content
         });
+    };
+
+
+    const handleUpdatePost = async (postId) => {
+
+        try {
+
+            await API.put(
+                `/posts/${postId}`,
+                {
+                    title: editForm.title,
+                    content: editForm.content
+                }
+            );
+
+            setEditingPost(null);
+
+            fetchPosts();
+
+            alert("Post updated successfully");
+
+        } catch (err) {
+
+            console.error(err);
+
+            alert("Update failed");
+        }
     };
 
     return (
@@ -328,6 +358,33 @@ const Posts = ({ goToDashboard }) => {
                                         minHeight: "100px"
                                     }}
                                 />
+
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        gap: "10px",
+                                        marginTop: "10px"
+                                    }}
+                                >
+                                    <button
+                                        onClick={() =>
+                                            handleUpdatePost(post.id)
+                                        }
+                                        style={postBtn}
+                                    >
+                                        Save
+                                    </button>
+
+                                    <button
+                                        onClick={() =>
+                                            setEditingPost(null)
+                                        }
+                                        style={deleteBtn}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+
                             </>
 
                         ) : (
