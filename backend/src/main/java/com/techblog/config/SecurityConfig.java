@@ -46,12 +46,17 @@ public class SecurityConfig {
                                 "/api/users/login",
                                 "/api/users/register",
                                 "/api/users/verify",
-
-                                // Forgot Password
                                 "/api/users/forgot-password",
                                 "/api/users/reset-password",
 
                                 "/uploads/**",
+
+                                // WebSocket
+                                "/ws/**",
+
+                                // SockJS internal endpoints
+                                "/ws/info/**",
+                                "/ws/**",
 
                                 "/api/files/**"
 
