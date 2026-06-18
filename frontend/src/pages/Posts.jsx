@@ -8,7 +8,9 @@ const Posts = ({ goToDashboard }) => {
     const [commentInput, setCommentInput] = useState({});
     const [likes, setLikes] = useState({});
     const [likedPosts, setLikedPosts] = useState({});
+    const [editingPost, setEditingPost] = useState(null);
 
+    const [editForm, setEditForm] = useState({title: "", content: ""});
     const user = JSON.parse(localStorage.getItem("user") || "null");
 
     useEffect(() => {
@@ -144,7 +146,6 @@ const Posts = ({ goToDashboard }) => {
         }
     };
 
-    // ================= ADD COMMENT =================
 
 
 // ================= ADD COMMENT =================
@@ -219,6 +220,17 @@ const Posts = ({ goToDashboard }) => {
         }
     };
 
+
+    const handleEditClick = (post) => {
+
+        setEditingPost(post.id);
+
+        setEditForm({
+            title: post.title,
+            content: post.content
+        });
+    };
+
     return (
 
         <div style={container}>
@@ -289,15 +301,48 @@ const Posts = ({ goToDashboard }) => {
 
                         {/* ================= TITLE ================= */}
 
-                        <h2 style={title}>
-                            {post.title}
-                        </h2>
+                        {editingPost === post.id ? (
 
-                        {/* ================= CONTENT ================= */}
+                            <>
+                                <input
+                                    value={editForm.title}
+                                    onChange={(e) =>
+                                        setEditForm({
+                                            ...editForm,
+                                            title: e.target.value
+                                        })
+                                    }
+                                    style={input}
+                                />
 
-                        <p style={content}>
-                            {post.content}
-                        </p>
+                                <textarea
+                                    value={editForm.content}
+                                    onChange={(e) =>
+                                        setEditForm({
+                                            ...editForm,
+                                            content: e.target.value
+                                        })
+                                    }
+                                    style={{
+                                        ...input,
+                                        minHeight: "100px"
+                                    }}
+                                />
+                            </>
+
+                        ) : (
+
+                            <>
+                                <h2 style={title}>
+                                    {post.title}
+                                </h2>
+
+                                <p style={content}>
+                                    {post.content}
+                                </p>
+                            </>
+
+                        )}
 
                         {/* ================= IMAGE ================= */}
 
@@ -314,6 +359,8 @@ const Posts = ({ goToDashboard }) => {
                                     }}
                                 />
                             )}
+
+                        {/* ================= ACTIONS ================= */}
 
                         {/* ================= ACTIONS ================= */}
 
@@ -337,14 +384,23 @@ const Posts = ({ goToDashboard }) => {
                             {(user?.id === post.user?.id ||
                                 user?.email === "admin@gmail.com") && (
 
-                                <button
-                                    onClick={() =>
-                                        handleDelete(Number(post.id))
-                                    }
-                                    style={deleteBtn}
-                                >
-                                    Delete
-                                </button>
+                                <>
+                                    <button
+                                        onClick={() => handleEditClick(post)}
+                                        style={likeBtn}
+                                    >
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        onClick={() =>
+                                            handleDelete(Number(post.id))
+                                        }
+                                        style={deleteBtn}
+                                    >
+                                        Delete
+                                    </button>
+                                </>
 
                             )}
 

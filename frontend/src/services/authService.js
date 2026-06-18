@@ -33,45 +33,38 @@ export const loginUser = async (data) => {
         data
     );
 
-
-    // ================= FORGOT PASSWORD =================
-
-    export const forgotPassword = async (email) => {
-
-        const response = await API.post(
-            "/users/forgot-password",
-            { email }
-        );
-
-        return response.data;
-    };
-
-// ================= RESET PASSWORD =================
-
-    export const resetPassword = async (data) => {
-
-        const response = await API.post(
-            "/users/reset-password",
-            data
-        );
-
-        return response.data;
-    };
-
-
-
-    // ================= SAVE TOKEN =================
-
     localStorage.setItem(
         "token",
         response.data.token
     );
 
-    // ================= SAVE USER =================
-
     localStorage.setItem(
         "user",
         JSON.stringify(response.data.user)
+    );
+
+    return response.data;
+};
+
+// ================= FORGOT PASSWORD =================
+
+export const forgotPassword = async (email) => {
+
+    const response = await API.post(
+        "/users/forgot-password",
+        { email }
+    );
+
+    return response.data;
+};
+
+// ================= RESET PASSWORD =================
+
+export const resetPassword = async (data) => {
+
+    const response = await API.post(
+        "/users/reset-password",
+        data
     );
 
     return response.data;
@@ -82,9 +75,7 @@ export const loginUser = async (data) => {
 export const logoutUser = () => {
 
     localStorage.removeItem("token");
-
     localStorage.removeItem("user");
-
     localStorage.removeItem("profileImage");
 };
 
@@ -106,8 +97,13 @@ export const isAuthenticated = () => {
     return !!localStorage.getItem("token");
 };
 
-// create api method to search users by keyword using existing axios configuration only
+// ================= SEARCH USERS =================
+
 export const searchUsers = async (keyword) => {
-    const response = await API.get(`/users/search?keyword=${keyword}`);
+
+    const response = await API.get(
+        `/users/search?keyword=${keyword}`
+    );
+
     return response.data;
 };
