@@ -181,56 +181,62 @@ export default Login;
 
 const wrapper = {
     width: "100%",
-    maxWidth: "1200px",
+    maxWidth: "1450px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "60px",
+    gap: "100px",
     flexWrap: "wrap",
-    padding: "20px"
+    padding: "40px"
 };
 
 const leftSection = {
-    flex: 1,
-    minWidth: "300px",
-    color: "white"
+    flex: 1.2,
+    minWidth: "500px",
+    color: "white",
+    paddingLeft: "40px"
 };
 
 const logo = {
-    fontSize: "40px",
+    fontSize: "56px",
     fontWeight: "700",
-    marginBottom: "20px",
+    marginBottom: "25px",
     background: "linear-gradient(to right, #38bdf8, #2563eb)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent"
 };
 
 const heading = {
-    fontSize: "32px",
-    marginBottom: "15px",
+    fontSize: "48px",
+    fontWeight: "700",
+    marginBottom: "20px",
     lineHeight: "1.2"
 };
 
 const description = {
-    fontSize: "16px",
+    fontSize: "22px",
     lineHeight: "1.8",
     color: "rgba(255,255,255,0.75)",
-    maxWidth: "500px"
+    maxWidth: "650px"
 };
 
 const cardStyle = {
     flex: 1,
-    minWidth: "320px",
-    maxWidth: "430px"
+    minWidth: "480px",
+    maxWidth: "540px",
+    padding: "40px"
 };
 
 const title = {
-    marginBottom: "25px",
-    fontSize: "30px"
+    marginBottom: "30px",
+    fontSize: "42px",
+    fontWeight: "700",
+    textAlign: "center"
 };
 
 const bottomText = {
-    marginTop: "18px",
-    fontSize: "14px",
-    color: "rgba(255,255,255,0.75)"
+    marginTop: "24px",
+    fontSize: "16px",
+    color: "rgba(255,255,255,0.75)",
+    textAlign: "center"
 };

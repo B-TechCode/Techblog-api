@@ -149,13 +149,23 @@ const Dashboard = ({
                         Feed
                     </button>
 
-                    <button
+                    <div
+                        style={notificationContainer}
                         onClick={goToNotifications}
-                        style={notificationBtn}
                     >
-                        🔔 Notifications ({notificationCount})
-                    </button>
 
+                   <span style={bellIcon}>
+        🔔
+                        </span>
+
+                              {notificationCount > 0 && (
+
+                            <span  style={notificationBadge}>
+                           {notificationCount}
+                       </span>
+
+                        )}
+                    </div>
 
                     {/* SEARCH USERS */}
 
@@ -284,7 +294,11 @@ const container = {
 
 const navbar = {
 
-    width: "100%",
+    width: "calc(100% - 40px)",
+
+    height: "68px",
+
+    margin: "16px auto 0",
 
     display: "flex",
 
@@ -292,26 +306,37 @@ const navbar = {
 
     alignItems: "center",
 
-    padding: "7px 16px",
+    padding: "0 28px",
 
     background: "rgba(255,255,255,0.03)",
 
-    backdropFilter: "blur(12px)",
+    backdropFilter: "blur(14px)",
 
-    borderBottom:
-        "1px solid rgba(255,255,255,0.06)"
+    border: "1px solid rgba(255,255,255,0.08)",
+
+    borderRadius: "14px",
+
+    boxSizing: "border-box",
+
+    position: "sticky",
+
+    top: "16px",
+
+    zIndex: "100"
 };
 
 const logo = {
 
-    fontSize: "18px",
+    fontSize: "28px",
 
     fontWeight: "700",
 
     margin: 0,
 
+    letterSpacing: "0.5px",
+
     background:
-        "linear-gradient(to right, #38bdf8, #2563eb)",
+        "linear-gradient(to right,#38bdf8,#2563eb)",
 
     WebkitBackgroundClip: "text",
 
@@ -324,19 +349,21 @@ const navRight = {
 
     alignItems: "center",
 
-    gap: "12px"
+    gap: "18px"
 };
 
 const feedBtn = {
 
-    padding: "7px 14px",
+    height: "40px",
 
-    borderRadius: "9px",
+    padding: "0 18px",
+
+    borderRadius: "8px",
 
     border: "none",
 
     background:
-        "linear-gradient(135deg, #2563eb, #38bdf8)",
+        "linear-gradient(135deg,#2563eb,#38bdf8)",
 
     color: "white",
 
@@ -344,55 +371,105 @@ const feedBtn = {
 
     fontWeight: "600",
 
-    fontSize: "12px"
+    fontSize: "14px",
+
+    transition: "0.3s"
 };
 
 const navProfile = {
 
-    width: "34px",
+    width: "42px",
 
-    height: "34px",
+    height: "42px",
 
     borderRadius: "50%",
 
     objectFit: "cover",
 
-    border:
-        "2px solid rgba(255,255,255,0.15)",
-
-    cursor: "pointer"
-};
-
-
-const notificationBtn = {
-
-    padding: "7px 13px",
-
-    borderRadius: "9px",
-
-    border: "none",
-
-    background:
-        "linear-gradient(135deg, #3b82f6, #2563eb)",
-
-    color: "white",
+    border: "2px solid #38bdf8",
 
     cursor: "pointer",
 
-    fontWeight: "600",
-
-    fontSize: "12px"
+    transition: "0.3s"
 };
+
+
+const notificationContainer = {
+
+    position: "relative",
+
+    width: "42px",
+
+    height: "42px",
+
+    borderRadius: "50%",
+
+    background:
+        "linear-gradient(135deg,#2563eb,#38bdf8)",
+
+    display: "flex",
+
+    justifyContent: "center",
+
+    alignItems: "center",
+
+    cursor: "pointer",
+
+    transition: "0.3s"
+};
+
+const bellIcon = {
+
+    color: "white",
+
+    fontSize: "18px"
+};
+
+const notificationBadge = {
+
+    position: "absolute",
+
+    top: "-4px",
+
+    right: "-4px",
+
+    width: "18px",
+
+    height: "18px",
+
+    borderRadius: "50%",
+
+    background: "#ef4444",
+
+    color: "white",
+
+    fontSize: "11px",
+
+    fontWeight: "700",
+
+    display: "flex",
+
+    justifyContent: "center",
+
+    alignItems: "center",
+
+    border: "2px solid #111827"
+};
+
+
+
 const logoutBtn = {
 
-    padding: "7px 13px",
+    height: "40px",
 
-    borderRadius: "9px",
+    padding: "0 18px",
+
+    borderRadius: "8px",
 
     border: "none",
 
     background:
-        "linear-gradient(135deg, #ef4444, #dc2626)",
+        "linear-gradient(135deg,#ef4444,#dc2626)",
 
     color: "white",
 
@@ -400,7 +477,9 @@ const logoutBtn = {
 
     fontWeight: "600",
 
-    fontSize: "12px"
+    fontSize: "14px",
+
+    transition: "0.3s"
 };
 
 /* ================= MAIN ================= */
@@ -415,11 +494,9 @@ const main = {
 
     alignItems: "center",
 
-    justifyContent: "center",
+    paddingTop: "40px",
 
-    paddingTop: "28px",
-
-    gap: "24px"
+    gap: "32px"
 };
 
 /* ================= PROFILE SECTION ================= */

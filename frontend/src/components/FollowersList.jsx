@@ -61,27 +61,27 @@ const FollowersList = ({ userId }) => {
 
     return (
 
-        <div style={container}>
+        <div style={styles.container}>
 
-            <h2 style={title}>
+            <h2 style={styles.title}>
                 Followers
             </h2>
 
             {followers.length === 0 ? (
 
-                <p style={emptyText}>
+                <p style={styles.noFollowers}>
                     No followers yet.
                 </p>
 
             ) : (
 
-                <ul style={list}>
+                <ul style={styles.list}>
 
                     {followers.map((follower) => (
 
                         <li
                             key={follower.id}
-                            style={listItem}
+                            style={styles.listItem}
                         >
 
                             <span>
@@ -90,9 +90,7 @@ const FollowersList = ({ userId }) => {
 
                             <button
                                 onClick={() =>
-                                    handleFollow(
-                                        follower.id
-                                    )
+                                    handleFollow(follower.id)
                                 }
                                 style={followBtn}
                             >
@@ -110,11 +108,14 @@ const FollowersList = ({ userId }) => {
             )}
 
         </div>
+
     );
-};
+
+};   // ✅ THIS WAS MISSING
 
 export default FollowersList;
 
+// ================= STYLES =================
 
 const styles = {
 
@@ -166,7 +167,11 @@ const styles = {
 
     noFollowers: {
 
-        color: "rgba(255,255,255,0.7)"
+        color: "rgba(255,255,255,0.7)",
+
+        textAlign: "center",
+
+        padding: "20px"
     }
 };
 
@@ -178,8 +183,7 @@ const followBtn = {
 
     borderRadius: "8px",
 
-    background:
-        "linear-gradient(135deg, #2563eb, #38bdf8)",
+    background: "linear-gradient(135deg, #2563eb, #38bdf8)",
 
     color: "white",
 
