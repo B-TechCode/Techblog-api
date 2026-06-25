@@ -282,3 +282,46 @@ option {
         padding: 15px;
     }
 }
+/* ===================================================== */
+/* SEARCH BAR PLACEHOLDER & FOCUS */
+/* ===================================================== */
+
+.search-input::placeholder {
+    color: rgba(255,255,255,0.65);
+}
+
+.search-input::-webkit-input-placeholder {
+    color: rgba(255,255,255,0.65);
+}
+
+.search-input::-moz-placeholder {
+    color: rgba(255,255,255,0.65);
+}
+
+.search-input:-ms-input-placeholder {
+    color: rgba(255,255,255,0.65);
+}
+
+.search-input:focus {
+    border: 1px solid #38bdf8 !important;
+    box-shadow: 0 0 10px rgba(56,189,248,.25);
+}
+
+/* Remove default browser clear icon */
+.search-input::-webkit-search-cancel-button{
+    display:none;
+}
+
+/* Smooth dropdown scrollbar */
+.search-dropdown::-webkit-scrollbar{
+    width:6px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb{
+    background:#475569;
+    border-radius:10px;
+}
+
+.search-dropdown::-webkit-scrollbar-track{
+    background:transparent;
+}

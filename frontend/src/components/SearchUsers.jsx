@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import { searchUsers } from "../services/authService";
-
 import { followUser } from "../services/followService";
 
 const SearchUsers = () => {
@@ -44,8 +43,7 @@ const SearchUsers = () => {
 
             try {
 
-                const data =
-                    await searchUsers(keyword);
+                const data = await searchUsers(keyword);
 
                 setUsers(data);
 
@@ -64,6 +62,7 @@ const SearchUsers = () => {
         <div style={styles.container}>
 
             <input
+                className="search-input"
                 type="text"
                 placeholder="Search people..."
                 value={keyword}
@@ -73,42 +72,42 @@ const SearchUsers = () => {
                 style={styles.input}
             />
 
-            <ul style={styles.list}>
+            {/* SHOW DROPDOWN ONLY WHEN USERS EXIST */}
 
-                {users.map((user) => (
+            {users.length > 0 && (
 
-                    <li
-                        key={user.id}
-                        style={styles.listItem}
-                    >
+                <ul style={styles.list}>
 
-                       <span
-                           style={{
-                               maxWidth: "150px",
-                               whiteSpace: "nowrap",
-                               overflow: "hidden",
-                               textOverflow: "ellipsis"
-                           }}
-                       >
-                           {user.name}
-                       </span>
+                    {users.map((user) => (
 
-                        <button
-                            onClick={() =>
-                                handleFollow(user.id)
-                            }
-                            style={styles.followBtn}
+                        <li
+                            key={user.id}
+                            style={styles.listItem}
                         >
-                            Follow
-                        </button>
 
-                    </li>
+                            <span style={styles.userName}>
+                                {user.name}
+                            </span>
 
-                ))}
+                            <button
+                                onClick={() =>
+                                    handleFollow(user.id)
+                                }
+                                style={styles.followBtn}
+                            >
+                                Follow
+                            </button>
 
-            </ul>
+                        </li>
+
+                    ))}
+
+                </ul>
+
+            )}
 
         </div>
+
     );
 };
 
@@ -122,14 +121,14 @@ const styles = {
 
         position: "relative",
 
-        width: "260px"
+        width: "230px"
     },
 
     input: {
 
         width: "100%",
 
-        height: "42px",
+        height: "40px",
 
         padding: "0 14px",
 
@@ -139,21 +138,22 @@ const styles = {
 
         outline: "none",
 
-        background: "#1f2433",
+        background: "#232738",
 
-        color: "white",
+        color: "#ffffff",
 
         fontSize: "14px",
 
-        boxSizing: "border-box"
-    },
+        boxSizing: "border-box",
 
+        transition: ".3s"
+    },
 
     list: {
 
         position: "absolute",
 
-        top: "48px",
+        top: "46px",
 
         left: 0,
 
@@ -161,24 +161,22 @@ const styles = {
 
         listStyle: "none",
 
-        padding: "8px",
-
         margin: 0,
+
+        padding: "8px",
 
         borderRadius: "12px",
 
         background: "#1b2233",
 
-        boxShadow: "0 10px 30px rgba(0,0,0,.35)",
+        boxShadow: "0 12px 30px rgba(0,0,0,.35)",
 
-        maxHeight: "320px",
+        maxHeight: "300px",
 
         overflowY: "auto",
 
         zIndex: 999
     },
-
-
 
     listItem: {
 
@@ -188,36 +186,45 @@ const styles = {
 
         alignItems: "center",
 
-        padding: "10px 12px",
-
-        borderRadius: "10px",
+        padding: "10px",
 
         marginBottom: "8px",
 
-        background: "rgba(255,255,255,0.05)",
-
-        color: "white"
-    },
-
-
-
-    followBtn: {
-
-        padding: "6px 14px",
-
         borderRadius: "8px",
 
-        border: "none",
+        background: "rgba(255,255,255,.05)"
+    },
 
-        background:
-            "linear-gradient(135deg,#2563eb,#38bdf8)",
+    userName: {
 
         color: "white",
 
+        maxWidth: "120px",
+
+        whiteSpace: "nowrap",
+
+        overflow: "hidden",
+
+        textOverflow: "ellipsis",
+
+        fontSize: "14px"
+    },
+
+    followBtn: {
+
+        border: "none",
+
+        borderRadius: "8px",
+
+        padding: "6px 12px",
+
         cursor: "pointer",
+
+        color: "white",
 
         fontWeight: "600",
 
-        fontSize: "13px"
-    },
+        background:
+            "linear-gradient(135deg,#2563eb,#38bdf8)"
+    }
 };
