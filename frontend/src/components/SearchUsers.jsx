@@ -65,7 +65,7 @@ const SearchUsers = () => {
 
             <input
                 type="text"
-                placeholder="Search users..."
+                placeholder="Search people..."
                 value={keyword}
                 onChange={(e) =>
                     setKeyword(e.target.value)
@@ -82,9 +82,16 @@ const SearchUsers = () => {
                         style={styles.listItem}
                     >
 
-                        <span>
-                            {user.name}
-                        </span>
+                       <span
+                           style={{
+                               maxWidth: "150px",
+                               whiteSpace: "nowrap",
+                               overflow: "hidden",
+                               textOverflow: "ellipsis"
+                           }}
+                       >
+                           {user.name}
+                       </span>
 
                         <button
                             onClick={() =>
@@ -113,47 +120,65 @@ const styles = {
 
     container: {
 
-        width: "100%",
+        position: "relative",
 
-        maxWidth: "500px",
-
-        margin: "20px auto",
-
-        padding: "20px",
-
-        borderRadius: "16px",
-
-        background:
-            "rgba(255,255,255,0.06)",
-
-        backdropFilter: "blur(12px)"
+        width: "260px"
     },
 
     input: {
 
         width: "100%",
 
-        padding: "12px",
+        height: "42px",
+
+        padding: "0 14px",
 
         borderRadius: "10px",
 
-        border: "none",
+        border: "1px solid rgba(255,255,255,0.08)",
 
         outline: "none",
 
-        marginBottom: "16px",
+        background: "#1f2433",
 
-        fontSize: "14px"
+        color: "white",
+
+        fontSize: "14px",
+
+        boxSizing: "border-box"
     },
+
 
     list: {
 
+        position: "absolute",
+
+        top: "48px",
+
+        left: 0,
+
+        width: "100%",
+
         listStyle: "none",
 
-        padding: 0,
+        padding: "8px",
 
-        margin: 0
+        margin: 0,
+
+        borderRadius: "12px",
+
+        background: "#1b2233",
+
+        boxShadow: "0 10px 30px rgba(0,0,0,.35)",
+
+        maxHeight: "320px",
+
+        overflowY: "auto",
+
+        zIndex: 999
     },
+
+
 
     listItem: {
 
@@ -163,33 +188,36 @@ const styles = {
 
         alignItems: "center",
 
-        padding: "10px 14px",
-
-        background:
-            "rgba(255,255,255,0.05)",
+        padding: "10px 12px",
 
         borderRadius: "10px",
 
-        marginBottom: "10px",
+        marginBottom: "8px",
+
+        background: "rgba(255,255,255,0.05)",
 
         color: "white"
     },
 
+
+
     followBtn: {
 
-        padding: "6px 12px",
+        padding: "6px 14px",
 
         borderRadius: "8px",
 
         border: "none",
 
         background:
-            "linear-gradient(135deg, #2563eb, #38bdf8)",
+            "linear-gradient(135deg,#2563eb,#38bdf8)",
 
         color: "white",
 
         cursor: "pointer",
 
-        fontWeight: "600"
-    }
+        fontWeight: "600",
+
+        fontSize: "13px"
+    },
 };
