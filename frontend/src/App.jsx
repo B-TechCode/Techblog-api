@@ -140,10 +140,18 @@ function App() {
 
     // ================= NOTIFICATIONS =================
 
+    // ================= NOTIFICATIONS =================
+
     if (page === "notifications") {
 
         return (
-            <Notifications />
+
+            <Notifications
+                goToDashboard={() =>
+                    setPage("dashboard")
+                }
+            />
+
         );
     }
 

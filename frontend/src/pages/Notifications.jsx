@@ -1,9 +1,8 @@
-// create simple notifications page using getNotifications service and useEffect only
-
 import { useEffect, useState } from "react";
 import { getNotifications } from "../services/notificationService";
 
-const Notifications = () => {
+const Notifications = ({ goToDashboard }) => {
+
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -21,91 +20,286 @@ const Notifications = () => {
     }, []);
 
     const fetchNotifications = async () => {
+
         try {
+
             setLoading(true);
+
             const data = await getNotifications();
+
             setNotifications(data);
+
             setError(null);
+
         } catch (err) {
-            console.error("Failed to load notifications:", err);
-            setError("Failed to load notifications");
+
+            console.error(err);
+
+            setError("Failed to load notifications.");
+
         } finally {
+
             setLoading(false);
         }
     };
 
-    if (loading) return <div style={styles.container}><p>Loading...</p></div>;
-
-    if (error) return <div style={styles.container}><p style={styles.error}>{error}</p></div>;
-
     return (
-        <div style={styles.container}>
-            <h1 style={styles.title}>🔔 Notifications</h1>
 
-            {notifications.length === 0 ? (
-                <p style={styles.empty}>No notifications</p>
-            ) : (
-                <div style={styles.list}>
-                    {notifications.map((notif) => (
-                        <div key={notif.id} style={styles.notifCard}>
-                            <p style={styles.message}>{notif.message}</p>
-                            <span style={styles.time}>
-                             {new Date(notif.createdAt).toLocaleString()}
-                           </span>
-                        </div>
-                    ))}
+        <div style={styles.page}>
+
+            {/* ================= NAVBAR ================= */}
+
+            <div style={styles.navbar}>
+
+                <button
+                    onClick={goToDashboard}
+                    style={styles.backBtn}
+                >
+                    ← Back
+                </button>
+
+                <h2 style={styles.heading}>
+                    🔔 Notifications
+                </h2>
+
+                <div style={{ width: "90px" }} />
+
+            </div>
+
+            {/* ================= LOADING ================= */}
+
+            {loading && (
+
+                <div style={styles.centerBox}>
+                    Loading Notifications...
                 </div>
+
             )}
+
+            {/* ================= ERROR ================= */}
+
+            {!loading && error && (
+
+                <div style={styles.error}>
+                    {error}
+                </div>
+
+            )}
+
+            {/* ================= EMPTY ================= */}
+
+            {!loading &&
+                !error &&
+                notifications.length === 0 && (
+
+                    <div style={styles.emptyCard}>
+
+                        <h2>No Notifications</h2>
+
+                        <p>
+                            You're all caught up 🎉
+                        </p>
+
+                    </div>
+
+                )}
+
+            {/* ================= NOTIFICATION LIST ================= */}
+
+            {!loading &&
+                !error &&
+                notifications.length > 0 && (
+
+                    <div style={styles.list}>
+
+                        {notifications.map((notif) => (
+
+                            <div
+                                key={notif.id}
+                                style={styles.card}
+                            >
+
+                                <div style={styles.icon}>
+                                    🔔
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+
+                                    <div style={styles.message}>
+                                        {notif.message}
+                                    </div>
+
+                                    <div style={styles.time}>
+                                        {new Date(
+                                            notif.createdAt
+                                        ).toLocaleString()}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        ))}
+
+                    </div>
+
+                )}
+
         </div>
     );
 };
 
-const styles = {
-    container: {
-        maxWidth: "600px",
-        margin: "0 auto",
-        padding: "20px",
-        fontFamily: "Arial, sans-serif",
-    },
-    title: {
-        fontSize: "28px",
-        marginBottom: "20px",
-        color: "#333",
-    },
-    list: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "12px",
-    },
-    notifCard: {
-        background: "#f5f5f5",
-        padding: "15px",
-        borderRadius: "8px",
-        borderLeft: "4px solid #007bff",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-    },
-    message: {
-        margin: "0 0 8px 0",
-        fontSize: "15px",
-        color: "#333",
-    },
-    time: {
-        fontSize: "12px",
-        color: "#888",
-    },
-    empty: {
-        textAlign: "center",
-        color: "#999",
-        paddingTop: "40px",
-        fontSize: "16px",
-    },
-    error: {
-        color: "#d32f2f",
-        padding: "12px",
-        background: "#ffebee",
-        borderRadius: "4px",
-    },
-};
-
 export default Notifications;
 
+const styles = {
+
+    page: {
+
+        minHeight: "100vh",
+
+        background:
+            "linear-gradient(to bottom right,#020617,#0f172a)",
+
+        color: "white",
+
+        padding: "25px"
+    },
+
+    navbar: {
+
+        width: "100%",
+
+        maxWidth: "850px",
+
+        margin: "0 auto 35px",
+
+        display: "flex",
+
+        justifyContent: "space-between",
+
+        alignItems: "center"
+    },
+
+    heading: {
+
+        fontSize: "32px",
+
+        margin: 0,
+
+        fontWeight: "700"
+    },
+
+    backBtn: {
+
+        border: "none",
+
+        padding: "10px 20px",
+
+        borderRadius: "10px",
+
+        cursor: "pointer",
+
+        color: "white",
+
+        fontWeight: "600",
+
+        background:
+            "linear-gradient(135deg,#2563eb,#38bdf8)"
+    },
+
+    centerBox: {
+
+        textAlign: "center",
+
+        fontSize: "18px",
+
+        marginTop: "120px"
+    },
+
+    error: {
+
+        maxWidth: "700px",
+
+        margin: "30px auto",
+
+        padding: "15px",
+
+        borderRadius: "12px",
+
+        color: "#ffb4b4",
+
+        background: "#4a1010",
+
+        textAlign: "center"
+    },
+
+    emptyCard: {
+
+        maxWidth: "650px",
+
+        margin: "100px auto",
+
+        textAlign: "center",
+
+        padding: "40px",
+
+        borderRadius: "18px",
+
+        background: "rgba(255,255,255,.05)"
+    },
+
+    list: {
+
+        maxWidth: "850px",
+
+        margin: "0 auto",
+
+        display: "flex",
+
+        flexDirection: "column",
+
+        gap: "18px"
+    },
+
+    card: {
+
+        display: "flex",
+
+        gap: "20px",
+
+        alignItems: "center",
+
+        padding: "20px",
+
+        borderRadius: "16px",
+
+        background: "rgba(255,255,255,.06)",
+
+        border:
+            "1px solid rgba(255,255,255,.08)",
+
+        boxShadow:
+            "0 10px 35px rgba(0,0,0,.35)"
+    },
+
+    icon: {
+
+        fontSize: "26px"
+    },
+
+    message: {
+
+        fontSize: "17px",
+
+        fontWeight: "600",
+
+        marginBottom: "8px"
+    },
+
+    time: {
+
+        color: "#94a3b8",
+
+        fontSize: "13px"
+    }
+};
