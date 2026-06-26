@@ -243,19 +243,24 @@ const wrapper = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "60px",
+    gap: "40px",
     flexWrap: "wrap",
-    padding: "20px"
+    padding: "20px",
+    boxSizing: "border-box"
 };
+
+
 
 const leftSection = {
     flex: 1,
-    minWidth: "300px",
+    minWidth: "260px",
     color: "white"
 };
 
+
+
 const logo = {
-    fontSize: "32px",
+    fontSize: "clamp(30px,5vw,42px)",
     fontWeight: "700",
     marginBottom: "20px",
     background: "linear-gradient(to right, #38bdf8, #2563eb)",
@@ -264,13 +269,13 @@ const logo = {
 };
 
 const heading = {
-    fontSize: "32px",
+    fontSize: "clamp(26px,4vw,36px)",
     marginBottom: "15px",
     lineHeight: "1.2"
 };
 
 const description = {
-    fontSize: "16px",
+    fontSize: "clamp(14px,2vw,18px)",
     lineHeight: "1.8",
     color: "rgba(255,255,255,0.75)",
     maxWidth: "500px"
@@ -278,25 +283,29 @@ const description = {
 
 const cardStyle = {
     flex: 1,
-    minWidth: "320px",
-    maxWidth: "430px"
+    minWidth: "280px",
+    width: "100%",
+    maxWidth: "430px",
+    boxSizing: "border-box"
 };
+
+
 
 const title = {
     marginBottom: "25px",
-    fontSize: "30px"
+    fontSize: "clamp(24px,4vw,30px)"
 };
 
 const otpInput = {
-    letterSpacing: "3px",
+    letterSpacing: "2px",
     textAlign: "center",
-    fontSize: "18px",
-    fontWeight: "400"
+    fontSize: "clamp(16px,3vw,18px)",
+    fontWeight: "500"
 };
 
 const bottomText = {
     marginTop: "18px",
-    fontSize: "14px",
+    fontSize: "15px",
     color: "rgba(255,255,255,0.75)"
 };
 
