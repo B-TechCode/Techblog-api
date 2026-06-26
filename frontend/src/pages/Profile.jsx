@@ -657,89 +657,142 @@ const container = {
 
 const navbar = {
     width: "100%",
-    padding: "6px 16px",
-    height: "55px",
+    height: "68px",
+    padding: "0 40px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    background: "rgba(255,255,255,0.04)",
-    backdropFilter: "blur(12px)",
-    borderBottom:
-        "1px solid rgba(255,255,255,0.08)",
+    background: "rgba(15,23,42,.85)",
+    backdropFilter: "blur(18px)",
+    borderBottom: "1px solid rgba(255,255,255,.08)",
     position: "sticky",
     top: 0,
-    zIndex: 1000
+    zIndex: 999
 };
 
 const logo = {
-    fontSize: "15px",
-    fontWeight: "700"
+    fontSize: "24px",
+    fontWeight: "700",
+    letterSpacing: ".5px",
+    background: "linear-gradient(90deg,#38bdf8,#2563eb)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent"
 };
 
+
+
 const backBtn = {
-    padding: "7px 13px",
-    borderRadius: "8px",
+    padding: "10px 22px",
     border: "none",
-    background:
-        "linear-gradient(135deg, #2563eb, #38bdf8)",
-    color: "white",
+    borderRadius: "12px",
+    background: "linear-gradient(135deg,#2563eb,#38bdf8)",
+    color: "#fff",
     fontWeight: "600",
-    cursor: "pointer"
+    cursor: "pointer",
+    transition: ".3s"
 };
 
 const profileSection = {
+    width: "100%",
     display: "flex",
     justifyContent: "center",
-    marginTop: "25px"
+    padding: "40px 25px"
 };
 
+
 const profileCard = {
+
     width: "100%",
-    maxWidth: "450px",
-    padding: "25px 20px",
-    borderRadius: "20px",
-    background: "rgba(255,255,255,0.08)",
-    backdropFilter: "blur(14px)",
-    border:
-        "1px solid rgba(255,255,255,0.08)",
-    textAlign: "center",
-    margin: "20px auto"
+
+    maxWidth: "900px",
+
+    padding: "40px",
+
+    borderRadius: "28px",
+
+    background: "rgba(255,255,255,.06)",
+
+    backdropFilter: "blur(18px)",
+
+    border: "1px solid rgba(255,255,255,.08)",
+
+    boxShadow: "0 20px 60px rgba(0,0,0,.45)",
+
+    textAlign: "center"
 };
 
 const profileImg = {
-    width: "110px",
-    height: "110px",
+
+    width: "170px",
+
+    height: "170px",
+
     borderRadius: "50%",
+
     objectFit: "cover",
-    border: "3px solid #38bdf8",
+
+    border: "6px solid #38bdf8",
+
+    marginBottom: "22px",
+
+    boxShadow: "0 0 35px rgba(56,189,248,.35)"
+};
+
+
+
+const name = {
+
+    fontSize: "34px",
+
+    fontWeight: "700",
+
     marginBottom: "12px"
 };
 
-const name = {
-    fontSize: "24px",
-    marginBottom: "8px"
-};
+
 
 const bio = {
-    color: "rgba(255,255,255,0.7)",
-    fontSize: "13px",
-    marginBottom: "18px"
+
+    fontSize: "16px",
+
+    color: "rgba(255,255,255,.75)",
+
+    marginBottom: "10px",
+
+    lineHeight: "1.7"
 };
 
 const statsRow = {
+
     display: "flex",
+
     justifyContent: "center",
-    gap: "14px",
-    flexWrap: "wrap",
-    marginBottom: "18px"
+
+    gap: "22px",
+
+    marginTop: "35px",
+
+    marginBottom: "35px",
+
+    flexWrap: "wrap"
 };
 
 const statBox = {
-    padding: "10px 16px",
-    borderRadius: "12px",
-    background:
-        "rgba(255,255,255,0.05)"
+
+    width: "150px",
+
+    padding: "18px",
+
+    borderRadius: "18px",
+
+    background: "rgba(255,255,255,.05)",
+
+    border: "1px solid rgba(255,255,255,.08)",
+
+    transition: ".3s"
 };
+
+
 
 const profileUpdateSection = {
     marginTop: "15px"
@@ -752,15 +805,27 @@ const fileInput = {
 };
 
 const profileBtn = {
-    padding: "8px 12px",
-    borderRadius: "8px",
+
+    padding: "12px 28px",
+
     border: "none",
-    background:
-        "linear-gradient(135deg, #2563eb, #38bdf8)",
-    color: "white",
+
+    borderRadius: "14px",
+
+    background: "linear-gradient(135deg,#2563eb,#38bdf8)",
+
+    color: "#fff",
+
+    fontWeight: "600",
+
     cursor: "pointer",
-    fontWeight: "600"
+
+    marginTop: "15px",
+
+    fontSize: "15px"
 };
+
+
 
 const postsContainer = {
     width: "100%",
