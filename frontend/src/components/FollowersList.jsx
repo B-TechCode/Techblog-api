@@ -121,23 +121,31 @@ const styles = {
 
     container: {
 
-        marginTop: "20px",
+        width: "100%",
+
+        marginTop: "10px",
 
         padding: "15px",
 
-        borderRadius: "12px",
+        borderRadius: "14px",
 
-        background: "rgba(255,255,255,0.05)"
+        background: "rgba(255,255,255,0.05)",
+
+        boxSizing: "border-box"
     },
+
 
     title: {
 
-        fontSize: "18px",
+        fontSize: "clamp(16px,2vw,18px)",
 
         marginBottom: "12px",
 
-        color: "white"
+        color: "white",
+
+        textAlign: "center"
     },
+
 
     list: {
 
@@ -156,7 +164,11 @@ const styles = {
 
         alignItems: "center",
 
-        padding: "10px",
+        gap: "10px",
+
+        flexWrap: "wrap",
+
+        padding: "12px",
 
         marginBottom: "10px",
 
@@ -165,29 +177,37 @@ const styles = {
         background: "rgba(255,255,255,0.04)"
     },
 
+
+
     noFollowers: {
 
         color: "rgba(255,255,255,0.7)",
 
         textAlign: "center",
 
-        padding: "20px"
+        padding: "20px",
+
+        fontSize: "14px"
     }
 };
 
 const followBtn = {
 
-    padding: "6px 12px",
+    padding: "8px 14px",
+
+    minWidth: "90px",
 
     border: "none",
 
     borderRadius: "8px",
 
-    background: "linear-gradient(135deg, #2563eb, #38bdf8)",
+    background: "linear-gradient(135deg,#2563eb,#38bdf8)",
 
     color: "white",
 
     cursor: "pointer",
 
-    fontWeight: "600"
+    fontWeight: "600",
+
+    fontSize: "13px"
 };
