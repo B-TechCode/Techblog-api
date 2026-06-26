@@ -294,23 +294,37 @@ const Profile = ({ goToDashboard }) => {
 
             {/* ================= PROFILE CARD ================= */}
 
+            {/* ================= PROFILE CARD ================= */}
+
             <div style={profileSection}>
 
                 <div style={profileCard}>
 
-                    <img
-                        src={
-                            user.profilePic
-                                ? `http://localhost:8080/uploads/${user.profilePic}`
-                                : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                        }
-                        alt=""
-                        style={profileImg}
-                        onError={(e) => {
-                            e.target.src =
-                                "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-                        }}
-                    />
+                    {/* Cover Banner */}
+
+                    <div style={coverBanner}></div>
+
+                    {/* Profile Image */}
+
+                    <div style={imageWrapper}>
+
+                        <img
+                            src={
+                                user.profilePic
+                                    ? `http://localhost:8080/uploads/${user.profilePic}`
+                                    : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                            }
+                            alt="profile"
+                            style={profileImg}
+                            onError={(e) => {
+                                e.target.src =
+                                    "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                            }}
+                        />
+
+                    </div>
+
+                    {/* ================= PROFILE INFO ================= */}
 
                     {editMode ? (
 
@@ -319,54 +333,32 @@ const Profile = ({ goToDashboard }) => {
                             <input
                                 type="text"
                                 value={nameInput}
-                                onChange={(e) =>
-                                    setNameInput(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setNameInput(e.target.value)}
                                 placeholder="Name"
                                 style={inputStyle}
                             />
 
                             <textarea
                                 value={aboutInput}
-                                onChange={(e) =>
-                                    setAboutInput(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setAboutInput(e.target.value)}
                                 placeholder="About"
                                 style={textareaStyle}
                             />
 
                             <select
                                 value={genderInput}
-                                onChange={(e) =>
-                                    setGenderInput(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setGenderInput(e.target.value)}
                                 style={inputStyle}
                             >
 
-                                <option value="">
-                                    Select Gender
-                                </option>
-
-                                <option value="Male">
-                                    Male
-                                </option>
-
-                                <option value="Female">
-                                    Female
-                                </option>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
 
                             </select>
 
                             <button
-                                onClick={
-                                    handleProfileUpdate
-                                }
+                                onClick={handleProfileUpdate}
                                 style={profileBtn}
                             >
                                 Save Profile
@@ -383,26 +375,25 @@ const Profile = ({ goToDashboard }) => {
                             </h2>
 
                             <p style={bio}>
-                                {user.about ||
-                                    "No bio added"}
+                                {user.about || "No bio added"}
                             </p>
 
                             <p style={bio}>
-                                {user.gender}
+                                👤 {user.gender}
                             </p>
 
                             <button
-                                onClick={() =>
-                                    setEditMode(true)
-                                }
+                                onClick={() => setEditMode(true)}
                                 style={profileBtn}
                             >
-                                Edit Profile
+                                ✏ Edit Profile
                             </button>
 
                         </>
 
                     )}
+
+                    {/* ================= PROFILE STATS ================= */}
 
                     <div style={statsRow}>
 
@@ -423,10 +414,47 @@ const Profile = ({ goToDashboard }) => {
 
                     </div>
 
-                    <FollowersList />
-                    <FollowingList />
+                    {/* ================= FOLLOW SECTION ================= */}
 
-                    {/* PROFILE IMAGE UPDATE */}
+                    <div
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr",
+                            gap: "20px",
+                            marginTop: "25px",
+                            alignItems: "start"
+                        }}
+                    >
+
+                        <div
+                            style={{
+                                background: "rgba(255,255,255,.05)",
+                                borderRadius: "18px",
+                                padding: "18px",
+                                border: "1px solid rgba(255,255,255,.08)"
+                            }}
+                        >
+
+                            <FollowersList />
+
+                        </div>
+
+                        <div
+                            style={{
+                                background: "rgba(255,255,255,.05)",
+                                borderRadius: "18px",
+                                padding: "18px",
+                                border: "1px solid rgba(255,255,255,.08)"
+                            }}
+                        >
+
+                            <FollowingList />
+
+                        </div>
+
+                    </div>
+
+                    {/* ================= PROFILE IMAGE UPDATE ================= */}
 
                     <div style={profileUpdateSection}>
 
@@ -434,17 +462,13 @@ const Profile = ({ goToDashboard }) => {
                             type="file"
                             accept="image/*"
                             onChange={(e) =>
-                                setProfileImage(
-                                    e.target.files[0]
-                                )
+                                setProfileImage(e.target.files[0])
                             }
                             style={fileInput}
                         />
 
                         <button
-                            onClick={
-                                handleProfileImageUpdate
-                            }
+                            onClick={handleProfileImageUpdate}
                             style={profileBtn}
                         >
                             Change Profile Photo
@@ -455,6 +479,8 @@ const Profile = ({ goToDashboard }) => {
                 </div>
 
             </div>
+
+
 
             {/* ================= POSTS ================= */}
 
@@ -692,11 +718,32 @@ const backBtn = {
     transition: ".3s"
 };
 
+const profileBtn = {
+    padding: "12px 24px",
+    marginTop: "18px",
+    border: "none",
+    borderRadius: "12px",
+    background: "linear-gradient(135deg,#2563eb,#38bdf8)",
+    color: "#fff",
+    fontSize: "15px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "0.3s ease"
+};
+
+
+
+
+
 const profileSection = {
+
     width: "100%",
+
     display: "flex",
+
     justifyContent: "center",
-    padding: "40px 25px"
+
+    padding: "24px 20px"
 };
 
 
@@ -704,11 +751,11 @@ const profileCard = {
 
     width: "100%",
 
-    maxWidth: "900px",
+    maxWidth: "760px",
 
-    padding: "40px",
+    padding: "28px",
 
-    borderRadius: "28px",
+    borderRadius: "24px",
 
     background: "rgba(255,255,255,.06)",
 
@@ -716,50 +763,73 @@ const profileCard = {
 
     border: "1px solid rgba(255,255,255,.08)",
 
-    boxShadow: "0 20px 60px rgba(0,0,0,.45)",
+    boxShadow: "0 15px 45px rgba(0,0,0,.40)",
 
     textAlign: "center"
 };
 
+
+const coverBanner = {
+
+    width: "100%",
+
+    height: "140px",
+
+    borderRadius: "22px",
+
+    marginBottom: "-65px",
+
+    background:
+        "linear-gradient(135deg,#2563eb,#38bdf8)"
+};
+
+const imageWrapper = {
+
+    display: "flex",
+
+    justifyContent: "center",
+
+    marginBottom: "15px"
+};
+
 const profileImg = {
 
-    width: "170px",
+    width: "120px",
 
-    height: "170px",
+    height: "120px",
 
     borderRadius: "50%",
 
     objectFit: "cover",
 
-    border: "6px solid #38bdf8",
+    border: "4px solid #38bdf8",
 
-    marginBottom: "22px",
+    marginBottom: "16px",
 
-    boxShadow: "0 0 35px rgba(56,189,248,.35)"
+    boxShadow: "0 0 20px rgba(56,189,248,.35)"
 };
 
 
 
 const name = {
 
-    fontSize: "34px",
+    fontSize: "28px",
 
     fontWeight: "700",
 
-    marginBottom: "12px"
+    marginBottom: "8px"
 };
-
 
 
 const bio = {
 
-    fontSize: "16px",
+    fontSize: "14px",
 
     color: "rgba(255,255,255,.75)",
 
-    marginBottom: "10px",
+    marginBottom: "6px",
 
-    lineHeight: "1.7"
+    lineHeight: "1.5"
 };
 
 const statsRow = {
@@ -768,63 +838,47 @@ const statsRow = {
 
     justifyContent: "center",
 
-    gap: "22px",
+    gap: "16px",
 
-    marginTop: "35px",
+    marginTop: "20px",
 
-    marginBottom: "35px",
+    marginBottom: "20px",
 
     flexWrap: "wrap"
 };
 
+
+
 const statBox = {
 
-    width: "150px",
+    width: "120px",
 
-    padding: "18px",
+    padding: "14px",
 
-    borderRadius: "18px",
+    borderRadius: "14px",
 
     background: "rgba(255,255,255,.05)",
 
-    border: "1px solid rgba(255,255,255,.08)",
-
-    transition: ".3s"
+    border: "1px solid rgba(255,255,255,.08)"
 };
+
+
 
 
 
 const profileUpdateSection = {
-    marginTop: "15px"
+    marginTop: "25px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "15px"
 };
 
 const fileInput = {
     color: "white",
-    marginBottom: "10px",
-    width: "100%"
+    width: "100%",
+    maxWidth: "320px"
 };
-
-const profileBtn = {
-
-    padding: "12px 28px",
-
-    border: "none",
-
-    borderRadius: "14px",
-
-    background: "linear-gradient(135deg,#2563eb,#38bdf8)",
-
-    color: "#fff",
-
-    fontWeight: "600",
-
-    cursor: "pointer",
-
-    marginTop: "15px",
-
-    fontSize: "15px"
-};
-
 
 
 const postsContainer = {
