@@ -80,22 +80,27 @@ const styles = {
 
     container: {
 
-        marginTop: "20px",
+        width: "100%",
+
+        marginTop: "10px",
 
         padding: "15px",
 
-        borderRadius: "12px",
+        borderRadius: "14px",
 
-        background: "rgba(255,255,255,0.05)"
+        background: "rgba(255,255,255,0.05)",
+
+        boxSizing: "border-box"
     },
-
     title: {
 
-        fontSize: "18px",
+        fontSize: "clamp(16px,2vw,18px)",
 
         marginBottom: "12px",
 
-        color: "white"
+        color: "white",
+
+        textAlign: "center"
     },
 
     list: {
@@ -113,7 +118,13 @@ const styles = {
 
         alignItems: "center",
 
-        padding: "10px",
+        justifyContent: "space-between",
+
+        gap: "10px",
+
+        flexWrap: "wrap",
+
+        padding: "12px",
 
         marginBottom: "10px",
 
@@ -121,11 +132,20 @@ const styles = {
 
         background: "rgba(255,255,255,0.04)",
 
-        color: "white"
+        color: "white",
+
+        wordBreak: "break-word"
     },
+
 
     noFollowing: {
 
-        color: "rgba(255,255,255,0.7)"
+        color: "rgba(255,255,255,0.7)",
+
+        textAlign: "center",
+
+        padding: "20px",
+
+        fontSize: "14px"
     }
 };
