@@ -223,7 +223,9 @@ export default Upload;
 /* ================= STYLES ================= */
 const container = {
     width: "100%",
-    padding: "12px",
+    maxWidth: "420px",
+    margin: "0 auto",
+    padding: "16px",
     borderRadius: "16px",
     background: "rgba(255,255,255,0.05)",
     border: "1px solid rgba(255,255,255,0.08)",
@@ -231,14 +233,14 @@ const container = {
 };
 
 const title = {
-    fontSize: "13px",
+    fontSize: "clamp(14px,2vw,18px)",
     marginBottom: "10px",
     fontWeight: "600"
 };
 
 const imageStyle = {
-    width: "78px",
-    height: "78px",
+    width: "clamp(70px,18vw,90px)",
+    height: "clamp(70px,18vw,90px)",
     borderRadius: "50%",
     objectFit: "cover",
     border: "2px solid rgba(255,255,255,0.15)",
@@ -246,8 +248,8 @@ const imageStyle = {
 };
 
 const emptyPreview = {
-    width: "78px",
-    height: "78px",
+    width: "clamp(70px,18vw,90px)",
+    height: "clamp(70px,18vw,90px)",
     borderRadius: "50%",
     background: "rgba(255,255,255,0.06)",
     border: "2px solid rgba(255,255,255,0.08)",
@@ -255,28 +257,29 @@ const emptyPreview = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    fontSize: "28px"
+    fontSize: "clamp(24px,6vw,30px)"
 };
 
 const buttonRow = {
     display: "flex",
     justifyContent: "center",
-    gap: "8px",
+    alignItems: "center",
+    gap: "10px",
     flexWrap: "wrap"
 };
 
 const chooseBtn = {
-    padding: "8px 12px",
+    padding: "10px 14px",
     borderRadius: "10px",
     background: "rgba(255,255,255,0.08)",
     color: "white",
     cursor: "pointer",
     fontWeight: "600",
-    fontSize: "12px"
+    fontSize: "clamp(12px,2vw,14px)"
 };
 
 const uploadBtn = {
-    padding: "8px 14px",
+    padding: "10px 16px",
     borderRadius: "10px",
     border: "none",
     background:
@@ -284,13 +287,13 @@ const uploadBtn = {
     color: "white",
     fontWeight: "600",
     cursor: "pointer",
-    fontSize: "12px"
+    fontSize: "clamp(12px,2vw,14px)"
 };
 
 const fileName = {
     marginTop: "8px",
     color: "rgba(255,255,255,0.7)",
-    fontSize: "11px",
+    fontSize: "clamp(11px,2vw,13px)",
     wordBreak: "break-word"
 };
 
@@ -301,5 +304,5 @@ const msg = {
     background: "rgba(34,197,94,0.18)",
     border: "1px solid #22c55e",
     color: "#22c55e",
-    fontSize: "11px"
+    fontSize: "clamp(11px,2vw,13px)"
 };
