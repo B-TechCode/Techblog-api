@@ -69,8 +69,8 @@ const spinnerBox = {
 };
 
 const spinner = {
-    width: "65px",
-    height: "65px",
+    width: "clamp(50px, 8vw, 65px)",
+    height: "clamp(50px, 8vw, 65px)",
     border: "6px solid rgba(255,255,255,0.15)",
     borderTop: "6px solid #38bdf8",
     borderRadius: "50%",
@@ -80,7 +80,7 @@ const spinner = {
 
 const text = {
     color: "white",
-    fontSize: "16px",
+    fontSize: "clamp(14px,2vw,16px)",
     letterSpacing: "1px",
     fontWeight: "500"
 };
