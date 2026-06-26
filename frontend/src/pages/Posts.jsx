@@ -597,20 +597,43 @@ const container = {
 };
 
 const navbar = {
-    width: "100%",
-    padding: "6px 16px",
-    height: "55px",
+
+    width: "95%",
+
+    minHeight: "60px",
+
+    margin: "16px auto",
+
+    padding: "12px 20px",
+
     display: "flex",
+
     justifyContent: "space-between",
+
     alignItems: "center",
+
+    flexWrap: "wrap",
+
+    gap: "12px",
+
     background: "rgba(255,255,255,0.04)",
+
     backdropFilter: "blur(12px)",
-    borderBottom: "1px solid rgba(255,255,255,0.08)",
+
+    border: "1px solid rgba(255,255,255,.08)",
+
+    borderRadius: "14px",
+
+    boxSizing: "border-box",
+
     position: "sticky",
-    top: 0,
-    zIndex: 1000,
-    boxSizing: "border-box"
+
+    top: "16px",
+
+    zIndex: 1000
 };
+
+
 
 const logo = {
     fontSize: "15px",
@@ -633,37 +656,61 @@ const backBtn = {
 // ✅ UPDATED FEED CONTAINER
 
 const feedContainer = {
+
     width: "100%",
+
     maxWidth: "1400px",
+
     margin: "25px auto",
+
     display: "grid",
+
     gridTemplateColumns:
-        "repeat(auto-fit, minmax(380px, 1fr))",
-    gap: "24px",
-    padding: "0 20px",
-    boxSizing: "border-box",
-    justifyItems: "center" // ✅ IMPORTANT
+        "repeat(auto-fit,minmax(320px,1fr))",
+
+    gap: "22px",
+
+    padding: "0 16px",
+
+    justifyItems: "center",
+
+    boxSizing: "border-box"
 };
 
 // ✅ UPDATED CARD
 
 const card = {
+
     width: "100%",
-    maxWidth: "420px", // ✅ IMPORTANT
+
+    maxWidth: "420px",
+
     minHeight: "320px",
+
     padding: "18px",
+
     borderRadius: "20px",
-    background: "rgba(255,255,255,0.08)",
+
+    background: "rgba(255,255,255,.08)",
+
     backdropFilter: "blur(14px)",
-    border: "1px solid rgba(255,255,255,0.08)",
-    boxShadow:
-        "0 8px 40px rgba(0,0,0,0.35)",
+
+    border: "1px solid rgba(255,255,255,.08)",
+
+    boxShadow: "0 8px 40px rgba(0,0,0,.35)",
+
     display: "flex",
+
     flexDirection: "column",
+
     justifyContent: "space-between",
+
     overflow: "hidden",
-    margin: "0 auto" // ✅ IMPORTANT
+
+    boxSizing: "border-box"
 };
+
+
 
 const topRow = {
     display: "flex",
@@ -712,10 +759,15 @@ const content = {
 };
 
 const postImg = {
+
     width: "100%",
-    maxHeight: "220px",
+
+    maxHeight: "260px",
+
     objectFit: "cover",
+
     borderRadius: "12px",
+
     marginBottom: "12px"
 };
 
@@ -729,26 +781,46 @@ const actionRow = {
 };
 
 const likeBtn = {
-    padding: "7px 12px",
+
+    padding: "8px 14px",
+
+    minWidth: "70px",
+
     borderRadius: "9px",
+
     border: "none",
+
     background:
-        "linear-gradient(135deg, #ec4899, #f43f5e)",
+        "linear-gradient(135deg,#ec4899,#f43f5e)",
+
     color: "white",
+
     cursor: "pointer",
+
     fontWeight: "600",
+
     fontSize: "12px"
 };
 
 const deleteBtn = {
-    padding: "7px 12px",
+
+    padding: "8px 14px",
+
+    minWidth: "70px",
+
     borderRadius: "9px",
+
     border: "none",
+
     background:
-        "linear-gradient(135deg, #ef4444, #dc2626)",
+        "linear-gradient(135deg,#ef4444,#dc2626)",
+
     color: "white",
+
     cursor: "pointer",
+
     fontWeight: "600",
+
     fontSize: "12px"
 };
 
@@ -768,30 +840,60 @@ const comment = {
 };
 
 const inputRow = {
+
     display: "flex",
+
     gap: "8px",
-    marginTop: "auto"
+
+    marginTop: "auto",
+
+    flexWrap: "wrap"
 };
+
 
 const input = {
+
     flex: 1,
+
+    minWidth: "180px",
+
     padding: "10px",
+
     borderRadius: "9px",
-    border: "1px solid rgba(255,255,255,0.1)",
-    background: "rgba(255,255,255,0.08)",
+
+    border: "1px solid rgba(255,255,255,.1)",
+
+    background: "rgba(255,255,255,.08)",
+
     color: "white",
+
     outline: "none",
-    fontSize: "12px"
+
+    fontSize: "13px",
+
+    boxSizing: "border-box"
 };
 
+
+
 const postBtn = {
-    padding: "10px 15px",
+
+    padding: "10px 16px",
+
+    minWidth: "70px",
+
     borderRadius: "9px",
+
     border: "none",
+
     background:
-        "linear-gradient(135deg, #2563eb, #38bdf8)",
+        "linear-gradient(135deg,#2563eb,#38bdf8)",
+
     color: "white",
+
     fontWeight: "600",
+
     cursor: "pointer",
+
     fontSize: "12px"
 };
