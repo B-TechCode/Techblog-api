@@ -162,38 +162,50 @@ const styles = {
 
         color: "white",
 
-        padding: "25px"
+        padding: "20px 16px",
+
+        boxSizing: "border-box"
     },
 
     navbar: {
 
         width: "100%",
 
-        maxWidth: "850px",
+        maxWidth: "900px",
 
-        margin: "0 auto 35px",
+        margin: "0 auto 30px",
 
         display: "flex",
 
         justifyContent: "space-between",
 
-        alignItems: "center"
+        alignItems: "center",
+
+        flexWrap: "wrap",
+
+        gap: "12px"
     },
+
+
 
     heading: {
 
-        fontSize: "32px",
+        fontSize: "clamp(24px,4vw,32px)",
 
         margin: 0,
 
         fontWeight: "700"
     },
 
+
+
     backBtn: {
 
         border: "none",
 
-        padding: "10px 20px",
+        padding: "10px 18px",
+
+        minWidth: "95px",
 
         borderRadius: "10px",
 
@@ -206,6 +218,8 @@ const styles = {
         background:
             "linear-gradient(135deg,#2563eb,#38bdf8)"
     },
+
+
 
     centerBox: {
 
@@ -250,7 +264,9 @@ const styles = {
 
     list: {
 
-        maxWidth: "850px",
+        width: "100%",
+
+        maxWidth: "900px",
 
         margin: "0 auto",
 
@@ -261,15 +277,17 @@ const styles = {
         gap: "18px"
     },
 
+
+
     card: {
 
         display: "flex",
 
-        gap: "20px",
-
         alignItems: "center",
 
-        padding: "20px",
+        gap: "16px",
+
+        padding: "18px",
 
         borderRadius: "16px",
 
@@ -279,8 +297,14 @@ const styles = {
             "1px solid rgba(255,255,255,.08)",
 
         boxShadow:
-            "0 10px 35px rgba(0,0,0,.35)"
+            "0 10px 35px rgba(0,0,0,.35)",
+
+        width: "100%",
+
+        boxSizing: "border-box"
     },
+
+
 
     icon: {
 
@@ -289,11 +313,13 @@ const styles = {
 
     message: {
 
-        fontSize: "17px",
+        fontSize: "clamp(15px,2vw,17px)",
 
         fontWeight: "600",
 
-        marginBottom: "8px"
+        marginBottom: "8px",
+
+        wordBreak: "break-word"
     },
 
     time: {
