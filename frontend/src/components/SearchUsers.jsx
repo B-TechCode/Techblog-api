@@ -121,7 +121,13 @@ const styles = {
 
         position: "relative",
 
-        width: "230px"
+        width: "100%",
+
+        maxWidth: "240px",
+
+        minWidth: "170px",
+
+        flexShrink: 1
     },
 
     input: {
@@ -146,8 +152,12 @@ const styles = {
 
         boxSizing: "border-box",
 
-        transition: ".3s"
+        transition: ".3s",
+
+        minWidth: 0
     },
+
+
 
     list: {
 
@@ -158,6 +168,8 @@ const styles = {
         left: 0,
 
         width: "100%",
+
+        minWidth: "220px",
 
         listStyle: "none",
 
@@ -177,6 +189,8 @@ const styles = {
 
         zIndex: 999
     },
+
+
 
     listItem: {
 
@@ -199,7 +213,9 @@ const styles = {
 
         color: "white",
 
-        maxWidth: "120px",
+        flex: 1,
+
+        marginRight: "10px",
 
         whiteSpace: "nowrap",
 
@@ -210,6 +226,8 @@ const styles = {
         fontSize: "14px"
     },
 
+
+
     followBtn: {
 
         border: "none",
@@ -218,6 +236,8 @@ const styles = {
 
         padding: "6px 12px",
 
+        minWidth: "76px",
+
         cursor: "pointer",
 
         color: "white",
@@ -225,6 +245,8 @@ const styles = {
         fontWeight: "600",
 
         background:
-            "linear-gradient(135deg,#2563eb,#38bdf8)"
+            "linear-gradient(135deg,#2563eb,#38bdf8)",
+
+        flexShrink: 0
     }
 };
