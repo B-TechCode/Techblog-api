@@ -302,7 +302,7 @@ const Profile = ({ goToDashboard }) => {
 
                     {/* Cover Banner */}
 
-                    <div style={coverBanner}></div>
+
 
                     {/* Profile Image */}
 
@@ -386,7 +386,7 @@ const Profile = ({ goToDashboard }) => {
                                 onClick={() => setEditMode(true)}
                                 style={profileBtn}
                             >
-                                ✏ Edit Profile
+                                 Edit Profile
                             </button>
 
                         </>
@@ -736,79 +736,60 @@ const profileBtn = {
 
 
 const profileSection = {
-
     width: "100%",
-
     display: "flex",
-
     justifyContent: "center",
-
-    padding: "24px 20px"
+    padding: "30px 20px 20px"
 };
 
 
 const profileCard = {
+    width: "80%",
+    maxWidth: "700px",
 
-    width: "100%",
+    // padding: "24px 24px 21px",   // reduced
 
-    maxWidth: "760px",
+    // padding: "18px 24px",
+    // padding: "19px 25px",
 
-    padding: "28px",
+    padding: "15px 25px",
 
     borderRadius: "24px",
 
-    background: "rgba(255,255,255,.06)",
-
-    backdropFilter: "blur(18px)",
+    background: "#1f2537",       // solid color
 
     border: "1px solid rgba(255,255,255,.08)",
 
-    boxShadow: "0 15px 45px rgba(0,0,0,.40)",
+    boxShadow: "0 10px 30px rgba(0,0,0,.35)",
 
     textAlign: "center"
 };
 
 
 const coverBanner = {
-
-    width: "100%",
-
-    height: "140px",
-
-    borderRadius: "22px",
-
-    marginBottom: "-65px",
-
-    background:
-        "linear-gradient(135deg,#2563eb,#38bdf8)"
+    height: "115px",
+    borderRadius: "20px",
+    background: "linear-gradient(135deg,#2563eb,#38bdf8)",
+    marginBottom: "60px"
 };
 
 const imageWrapper = {
-
     display: "flex",
-
     justifyContent: "center",
-
+    marginTop: "20px",
     marginBottom: "15px"
 };
 
+
 const profileImg = {
-
-    width: "120px",
-
-    height: "120px",
-
+    width: "95px",
+    height: "95px",
     borderRadius: "50%",
-
     objectFit: "cover",
-
     border: "4px solid #38bdf8",
-
-    marginBottom: "16px",
-
-    boxShadow: "0 0 20px rgba(56,189,248,.35)"
+    marginBottom: "15px",
+    boxShadow: "0 0 15px rgba(56,189,248,.35)"
 };
-
 
 
 const name = {
