@@ -263,9 +263,18 @@ const Dashboard = ({
 
                 <div style={createPostSection}>
 
-                    <CreatePost
-                        goToFeed={goToFeed}
-                    />
+                    <div
+                        style={{
+                            width: "100%",
+                            maxWidth: "850px"
+                        }}
+                    >
+
+                        <CreatePost
+                            goToFeed={goToFeed}
+                        />
+
+                    </div>
 
                 </div>
 
@@ -294,9 +303,9 @@ const container = {
 
 const navbar = {
 
-    width: "calc(100% - 40px)",
+    width: "95%",
 
-    height: "68px",
+    minHeight: "68px",
 
     margin: "16px auto 0",
 
@@ -306,7 +315,11 @@ const navbar = {
 
     alignItems: "center",
 
-    padding: "0 28px",
+    flexWrap: "wrap",
+
+    gap: "12px",
+
+    padding: "12px 20px",
 
     background: "rgba(255,255,255,0.03)",
 
@@ -327,7 +340,7 @@ const navbar = {
 
 const logo = {
 
-    fontSize: "28px",
+    fontSize: "clamp(22px, 4vw, 28px)",
 
     fontWeight: "700",
 
@@ -349,14 +362,20 @@ const navRight = {
 
     alignItems: "center",
 
-    gap: "18px"
+    justifyContent: "center",
+
+    flexWrap: "wrap",
+
+    gap: "12px"
 };
 
 const feedBtn = {
 
-    height: "40px",
+    minWidth: "75px",
 
-    padding: "0 18px",
+    height: "38px",
+
+    padding: "0 14px",
 
     borderRadius: "8px",
 
@@ -371,16 +390,18 @@ const feedBtn = {
 
     fontWeight: "600",
 
-    fontSize: "14px",
+    fontSize: "13px",
 
-    transition: "0.3s"
+    whiteSpace: "nowrap"
 };
 
 const navProfile = {
 
-    width: "42px",
+    width: "40px",
 
-    height: "42px",
+    height: "40px",
+
+    minWidth: "40px",
 
     borderRadius: "50%",
 
@@ -390,7 +411,7 @@ const navProfile = {
 
     cursor: "pointer",
 
-    transition: "0.3s"
+    flexShrink: 0
 };
 
 
@@ -398,9 +419,11 @@ const notificationContainer = {
 
     position: "relative",
 
-    width: "42px",
+    width: "38px",
 
-    height: "42px",
+    height: "38px",
+
+    minWidth: "38px",
 
     borderRadius: "50%",
 
@@ -415,7 +438,7 @@ const notificationContainer = {
 
     cursor: "pointer",
 
-    transition: "0.3s"
+    flexShrink: 0
 };
 
 const bellIcon = {
@@ -460,9 +483,11 @@ const notificationBadge = {
 
 const logoutBtn = {
 
-    height: "40px",
+    minWidth: "82px",
 
-    padding: "0 18px",
+    height: "38px",
+
+    padding: "0 14px",
 
     borderRadius: "8px",
 
@@ -477,9 +502,9 @@ const logoutBtn = {
 
     fontWeight: "600",
 
-    fontSize: "14px",
+    fontSize: "13px",
 
-    transition: "0.3s"
+    whiteSpace: "nowrap"
 };
 
 /* ================= MAIN ================= */
@@ -494,9 +519,11 @@ const main = {
 
     alignItems: "center",
 
-    paddingTop: "40px",
+    padding: "30px 16px",
 
-    gap: "32px"
+    gap: "24px",
+
+    boxSizing: "border-box"
 };
 
 /* ================= PROFILE SECTION ================= */
@@ -509,14 +536,20 @@ const profileSection = {
 
     justifyContent: "center",
 
-    alignItems: "center"
+    alignItems: "center",
+
+    padding: "0 16px"
 };
 
 const profileCard = {
 
-    width: "285px",
+    width: "100%",
 
-    padding: "8px",
+    maxWidth: "340px",
+
+    minWidth: "260px",
+
+    padding: "16px",
 
     borderRadius: "18px",
 
@@ -524,38 +557,40 @@ const profileCard = {
 
     backdropFilter: "blur(14px)",
 
-    border:
-        "1px solid rgba(255,255,255,0.08)",
+    border: "1px solid rgba(255,255,255,0.08)",
 
     textAlign: "center",
 
-    boxShadow:
-        "0 8px 40px rgba(0,0,0,0.35)"
+    boxShadow: "0 8px 40px rgba(0,0,0,0.35)",
+
+    boxSizing: "border-box"
 };
+
 
 const profileImg = {
 
-    width: "82px",
+    width: "clamp(70px,18vw,82px)",
 
-    height: "82px",
+    height: "clamp(70px,18vw,82px)",
 
     borderRadius: "50%",
 
     objectFit: "cover",
 
-    border:
-        "4px solid rgba(255,255,255,0.12)",
+    border: "4px solid rgba(255,255,255,0.12)",
 
     marginBottom: "8px"
 };
 
 const welcomeText = {
 
-    fontSize: "17px",
+    fontSize: "clamp(16px,3vw,20px)",
 
     fontWeight: "700",
 
-    marginBottom: "8px"
+    marginBottom: "8px",
+
+    wordBreak: "break-word"
 };
 
 const uploadWrapper = {
@@ -573,5 +608,9 @@ const createPostSection = {
 
     justifyContent: "center",
 
-    alignItems: "center"
+    alignItems: "center",
+
+    padding: "0 16px",
+
+    boxSizing: "border-box"
 };

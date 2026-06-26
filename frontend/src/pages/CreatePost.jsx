@@ -242,68 +242,124 @@ const wrapper = {
 };
 
 const cardStyle = {
+
     width: "100%",
-    maxWidth: "680px",
-    padding: "20px",
+
+    maxWidth: "720px",
+
+    minWidth: "280px",
+
+    padding: "clamp(16px,3vw,24px)",
+
     marginBottom: "35px",
-    borderRadius: "24px",
+
+    borderRadius: "22px",
+
     background: "rgba(255,255,255,0.07)",
+
     backdropFilter: "blur(14px)",
+
     border: "1px solid rgba(255,255,255,0.08)",
+
     boxShadow:
         "0 8px 40px rgba(0,0,0,0.35)",
-    color: "white"
+
+    color: "white",
+
+    boxSizing: "border-box"
 };
 
 const title = {
-    fontSize: "24px",
+
+    fontSize: "clamp(22px,4vw,28px)",
+
     fontWeight: "700",
+
     marginBottom: "22px",
+
     textAlign: "center"
 };
 
+
 const inputStyle = {
+
     width: "100%",
-    padding: "14px",
+
+    padding: "clamp(12px,2vw,14px)",
+
     marginBottom: "16px",
+
     borderRadius: "14px",
+
     border:
         "1px solid rgba(255,255,255,0.12)",
+
     background:
         "rgba(0,0,0,0.25)",
+
     color: "white",
+
     outline: "none",
-    fontSize: "15px"
+
+    fontSize: "clamp(14px,2vw,15px)",
+
+    boxSizing: "border-box"
 };
 
 const textareaStyle = {
+
     ...inputStyle,
-    minHeight: "140px",
-    resize: "none"
+
+    minHeight: "170px",
+
+    resize: "vertical"
 };
 
+
+
 const previewImg = {
+
     width: "100%",
-    maxHeight: "220px",
+
+    maxHeight: "300px",
+
     objectFit: "cover",
+
     borderRadius: "16px",
+
     marginBottom: "16px",
+
     border:
         "1px solid rgba(255,255,255,0.1)"
 };
 
+
+
 const buttonStyle = {
+
     width: "100%",
-    padding: "14px",
+
+    height: "48px",
+
     borderRadius: "14px",
+
     border: "none",
+
     background:
-        "linear-gradient(135deg, #22c55e, #00e676)",
+        "linear-gradient(135deg,#22c55e,#00e676)",
+
     color: "white",
+
     fontSize: "15px",
+
     fontWeight: "600",
-    cursor: "pointer"
+
+    cursor: "pointer",
+
+    transition: ".3s"
 };
+
+
 
 const errorStyle = {
     color: "#f87171",
