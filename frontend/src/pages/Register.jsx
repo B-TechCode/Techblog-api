@@ -205,7 +205,6 @@ const Register = ({ goToLogin, goToVerify }) => {
 export default Register;
 
 
-/* ================= STYLES ================= */
 
 /* ================= STYLES ================= */
 
@@ -215,20 +214,25 @@ const wrapper = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "100px",
+    gap: "60px",
     flexWrap: "wrap",
-    padding: "40px"
+    padding: "20px",
+    boxSizing: "border-box"
 };
+
+
 
 const leftSection = {
     flex: 1.2,
-    minWidth: "500px",
+    minWidth: "280px",
     color: "white",
-    paddingLeft: "40px"
+    paddingLeft: "10px"
 };
 
+
+
 const logo = {
-    fontSize: "56px",
+    fontSize: "clamp(34px,6vw,56px)",
     fontWeight: "700",
     marginBottom: "25px",
     background: "linear-gradient(to right, #38bdf8, #2563eb)",
@@ -237,14 +241,14 @@ const logo = {
 };
 
 const heading = {
-    fontSize: "48px",
+    fontSize: "clamp(30px,5vw,48px)",
     fontWeight: "700",
     marginBottom: "20px",
     lineHeight: "1.2"
 };
 
 const description = {
-    fontSize: "22px",
+    fontSize: "clamp(16px,2vw,22px)",
     lineHeight: "1.8",
     color: "rgba(255,255,255,0.75)",
     maxWidth: "650px"
@@ -252,21 +256,23 @@ const description = {
 
 const cardStyle = {
     flex: 1,
-    minWidth: "480px",
-    maxWidth: "540px",
-    padding: "40px"
+    minWidth: "280px",
+    width: "100%",
+    maxWidth: "520px",
+    padding: "30px",
+    boxSizing: "border-box"
 };
 
 const title = {
     marginBottom: "30px",
-    fontSize: "42px",
+    fontSize: "clamp(28px,5vw,42px)",
     fontWeight: "700",
     textAlign: "center"
 };
 
 const bottomText = {
     marginTop: "24px",
-    fontSize: "16px",
+    fontSize: "15px",
     color: "rgba(255,255,255,0.75)",
     textAlign: "center"
 };
