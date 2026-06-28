@@ -1,0 +1,87 @@
+
+
+services:
+
+  mysql:
+    image: mysql:8.4
+    container_name: techblog-mysql
+
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: techblog_db
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - techblog-network
+
+
+  backend:
+
+    build:
+      context: ./backend
+
+    container_name: techblog-backend
+
+    restart: always
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      UPLOAD_DIR: ${UPLOAD_DIR}
+
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/techblog_db
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+    networks:
+      - techblog-network
+
+
+  frontend:
+
+    build:
+      context: ./frontend
+
+    container_name: techblog-frontend
+
+    restart: always
+
+    depends_on:
+      - backend
+
+    ports:
+      - "3000:80"
+
+    networks:
+      - techblog-network
+
+
+volumes:
+  mysql-data:
+
+
+networks:
+  techblog-network:
