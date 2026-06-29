@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 public class WebConfig implements WebMvcConfigurer {
 
     // ✅ READ UPLOAD DIRECTORY
-    @Value("${file.upload-dir}")
+    @Value("${UPLOAD_DIR:/app/uploads}")
     private String uploadDir;
 
     // ✅ STATIC IMAGE ACCESS
