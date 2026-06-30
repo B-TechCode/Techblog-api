@@ -16,6 +16,10 @@
     <groupId>com.techblog</groupId>
     <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
+    <!-- Optional (Maven defaults to jar anyway) -->
+    <packaging>jar</packaging>
+
     <name>backend</name>
 
     <properties>
