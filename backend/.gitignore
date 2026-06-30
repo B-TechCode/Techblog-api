@@ -6,7 +6,6 @@ uploads/
 !**/src/test/**/target/
 
 # Application secrets
-src/main/resources/application.properties
 .env
 
 ### STS ###
