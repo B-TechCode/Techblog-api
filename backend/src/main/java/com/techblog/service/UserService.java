@@ -54,15 +54,27 @@ public class UserService {
         user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
         user.setIsVerified(false);
 
-        emailService.sendOtp(
-                user.getEmail(),
-                otp
-        );
+        // Save first
+        User savedUser = userRepository.save(user);
 
-        // 👉 PRINT OTP (IMPORTANT)
-        System.out.println("🔥 OTP for " + user.getEmail() + " = " + otp);
+        try {
 
-        return userRepository.save(user);
+            emailService.sendOtp(
+                    savedUser.getEmail(),
+                    otp
+            );
+
+            logger.info("OTP sent successfully");
+
+        } catch (Exception e) {
+
+            logger.error("Email sending failed", e);
+
+        }
+
+        System.out.println("🔥 OTP = " + otp);
+
+        return savedUser;
     }
 
     // ✅ GENERATE OTP
