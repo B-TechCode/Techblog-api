@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-
-
 @Service
 public class UserService {
 
@@ -24,30 +22,29 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-
     @Autowired
     private EmailService emailService;
-
 
     @Autowired
     private RateLimiterService rateLimiterService;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // ✅ REGISTER USER (OTP + expiry)
+    // ================= REGISTER USER =================
+
     public User registerUser(User user) {
 
         logger.info("Registering user with email: {}", user.getEmail());
 
-        // ✅ Check duplicate
+        // Check duplicate
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("User already exists with this email");
         }
 
-        // 🔐 Encrypt password
+        // Encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // 🔥 Generate OTP
+        // Generate OTP
         String otp = generateOtp();
 
         user.setOtp(otp);
@@ -77,12 +74,14 @@ public class UserService {
         return savedUser;
     }
 
-    // ✅ GENERATE OTP
+    // ================= GENERATE OTP =================
+
     public String generateOtp() {
         return String.valueOf((int) (Math.random() * 900000) + 100000);
     }
 
-    // ✅ VERIFY OTP
+    // ================= VERIFY OTP =================
+
     public String verifyOtp(String email, String otp) {
 
         User user = userRepository.findByEmail(email)
@@ -101,8 +100,7 @@ public class UserService {
             throw new RuntimeException("Invalid OTP");
         }
 
-        // ✅ FIX HERE
-        user.setIsVerified(true);   // 🔥 IMPORTANT
+        user.setIsVerified(true);
 
         user.setOtp(null);
         user.setOtpExpiry(null);
@@ -112,12 +110,12 @@ public class UserService {
         return "Account verified successfully";
     }
 
-    // ✅ LOGIN USER
+    // ================= LOGIN USER =================
+
     public User loginUser(String email, String password) {
 
         logger.info("Login attempt for email: {}", email);
 
-        // 🔥 Rate limiting
         if (rateLimiterService.isBlocked(email)) {
             logger.warn("User blocked due to too many attempts: {}", email);
             throw new RuntimeException("Too many login attempts. Try later.");
@@ -126,30 +124,31 @@ public class UserService {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
+
             User user = userOptional.get();
 
-            // 🔥 Check verified
             if (!Boolean.TRUE.equals(user.getIsVerified())) {
                 throw new RuntimeException("Please verify your email first");
             }
 
-            // 🔐 Password match
             if (passwordEncoder.matches(password, user.getPassword())) {
 
                 rateLimiterService.resetAttempts(email);
 
                 logger.info("Login successful for email: {}", email);
+
                 return user;
             }
         }
 
-        // ❌ Failed login
         rateLimiterService.recordFailedAttempt(email);
 
         logger.error("Invalid login attempt for email: {}", email);
+
         throw new RuntimeException("Invalid Email or Password");
     }
 
+    // ================= FORGOT PASSWORD =================
 
     public String sendResetOtp(String email) {
 
@@ -166,11 +165,24 @@ public class UserService {
 
         userRepository.save(user);
 
-        emailService.sendOtp(email, otp);
+        try {
+
+            emailService.sendOtp(email, otp);
+
+            logger.info("Reset OTP sent successfully");
+
+        } catch (Exception e) {
+
+            logger.error("Reset OTP email failed", e);
+
+        }
+
+        System.out.println("🔥 RESET OTP = " + otp);
 
         return "Reset OTP sent successfully";
     }
 
+    // ================= RESET PASSWORD =================
 
     public String resetPassword(
             String email,
@@ -226,7 +238,5 @@ public class UserService {
 
         return userRepository.save(user);
     }
-
-
 
 }
